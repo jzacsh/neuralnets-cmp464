@@ -1,0 +1,60 @@
+= CMP-464: Neural Networks
+:profhome: http://comet.lehman.cuny.edu/schneider
+:basecmp464: {profhome}/Fall17/CMP464
+:cmp464: {basecmp464}/index464.html
+:cmp464install: {basecmp464}/SetupSoftware.pdf
+:_installtf_: https://www.tensorflow.org/install/install_linux
+:installtf: {_installtf_}#determine_how_to_install_tensorflow
+:afterinsttf: {_installtf_}#next_steps
+:validatettf: {_installtf_}#ValidateYourInstallation
+
+Personal course work for {cmp464}[CMP-464 Neural Networks] with
+{profhome}[Professor Schneider] at Lehman College, Fall 2017.
+
+anaconda instructions just to help us -- will not be switching env.s/tools for
+the class.
+
+== install & setup for course or fresh clones
+
+Below steps -- except documentation on how i setup this repo -- are necessary
+for working on any fresh clone of this repo.
+
+.installed software {cmp464install}[based on instructions]
+----
+$ sudo apt install pip{,3}
+$ sudo pip3 install scipy numpy matplotlib scikit-{learn,image} graphviz
+----
+
+.Following {installtf}[tensorflow's `virtualenv` recommendation]:
+----
+$ virtualenv --system-site-packages -p python3 .tf/
+$ source srcactivate
+$ easy_install -U pip
+$ pip3 install --upgrade tensorflow
+----
+
+Tensorflow {afterinsttf}[docs recommends] to now validatig
+{validatettf}[tesnforflow installations].
+
+=== documenting what i did
+
+This section just describes what i did to setup this repo - not to be duplicated
+by cloners of this repo.
+
+.one-time hacks for this repo
+----
+$ echo .tf > .gitignore
+$ ln -sv .tf/bin/activate srcactivate # <1>
+----
+<1> <<workingactiv, below on utilizing this>>
+
+== active development
+
+When coming back to work in this repo, these steps are necessary.
+
+[[workingactiv]]
+.working in this repo
+----
+$ source srcactivate
+----
+
