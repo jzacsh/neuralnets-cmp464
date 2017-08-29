@@ -22,9 +22,6 @@ you followed <<installing, setup instructions>>
 $ source srcactivate
 ----
 
-The {cmp464install}[anaconda instructions] just to help us -- will not be
-switching env.s/tools for the class.
-
 [[installing]]
 == install & setup for course or fresh clones
 
@@ -47,6 +44,9 @@ $ pip3 install --upgrade tensorflow
 
 Tensorflow {afterinsttf}[docs recommends] to now validatig
 {validatettf}[tesnforflow installations].
+
+The {cmp464install}[anaconda instructions] just to help us -- will not be
+switching env.s/tools for the class.
 
 === documenting what i did
 
