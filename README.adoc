@@ -48,6 +48,17 @@ Tensorflow {afterinsttf}[docs recommends] to now validatig
 The {cmp464install}[anaconda instructions] just to help us -- will not be
 switching env.s/tools for the class.
 
+.ymmv: this all worked for *me*
+----
+$ uname -a
+Linux garak 4.10.0-33-generic #37~16.04.1-Ubuntu SMP Fri Aug 11 14:07:24 UTC 2017 x86_64 x86_64 x86_64 GNU/Linux
+$ cat /etc/lsb-release
+DISTRIB_ID=Ubuntu
+DISTRIB_RELEASE=16.04
+DISTRIB_CODENAME=xenial
+DISTRIB_DESCRIPTION="Ubuntu 16.04.3 LTS"
+----
+
 === documenting what i did
 
 This section just describes what i did to setup this repo - not to be duplicated
