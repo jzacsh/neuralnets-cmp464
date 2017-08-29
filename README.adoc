@@ -14,6 +14,18 @@ Personal course work for {cmp464}[CMP-464 Neural Networks] with
 anaconda instructions just to help us -- will not be switching env.s/tools for
 the class.
 
+== active development
+
+When coming back to work in this repo, these steps are necessary. It is assumed
+you followed <<installing, setup instructions>>
+
+[[workingactiv]]
+.working in this repo
+----
+$ source srcactivate
+----
+
+[[installing]]
 == install & setup for course or fresh clones
 
 Below steps -- except documentation on how i setup this repo -- are necessary
@@ -46,15 +58,4 @@ by cloners of this repo.
 $ echo .tf > .gitignore
 $ ln -sv .tf/bin/activate srcactivate # <1>
 ----
-<1> <<workingactiv, below on utilizing this>>
-
-== active development
-
-When coming back to work in this repo, these steps are necessary.
-
-[[workingactiv]]
-.working in this repo
-----
-$ source srcactivate
-----
-
+<1> <<workingactiv, bash-specific, for "active dev" section>>
