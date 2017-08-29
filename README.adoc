@@ -19,13 +19,13 @@ the class.
 Below steps -- except documentation on how i setup this repo -- are necessary
 for working on any fresh clone of this repo.
 
-.installed software {cmp464install}[based on instructions]
+Installed software {cmp464install}[based on instructions]:
 ----
 $ sudo apt install pip{,3}
 $ sudo pip3 install scipy numpy matplotlib scikit-{learn,image} graphviz
 ----
 
-.Following {installtf}[tensorflow's `virtualenv` recommendation]:
+Following {installtf}[tensorflow's `virtualenv` recommendation]:
 ----
 $ virtualenv --system-site-packages -p python3 .tf/
 $ source srcactivate
