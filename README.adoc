@@ -11,9 +11,6 @@
 Personal course work for {cmp464}[CMP-464 Neural Networks] with
 {profhome}[Professor Schneider] at Lehman College, Fall 2017.
 
-anaconda instructions just to help us -- will not be switching env.s/tools for
-the class.
-
 == active development
 
 When coming back to work in this repo, these steps are necessary. It is assumed
@@ -24,6 +21,9 @@ you followed <<installing, setup instructions>>
 ----
 $ source srcactivate
 ----
+
+The {cmp464install}[anaconda instructions] just to help us -- will not be
+switching env.s/tools for the class.
 
 [[installing]]
 == install & setup for course or fresh clones
