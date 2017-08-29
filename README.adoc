@@ -25,8 +25,8 @@ $ source srcactivate
 [[installing]]
 == install & setup for course or fresh clones
 
-Below steps -- except documentation on how i setup this repo -- are necessary
-for working on any fresh clone of this repo.
+Below are one-time steps are necessary for working on any fresh clone of this
+repo.
 
 Installed software {cmp464install}[based on instructions]:
 ----
