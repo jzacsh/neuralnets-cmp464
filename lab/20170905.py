@@ -24,7 +24,7 @@ def buildTrainingSet():
     return (xvals, yvals)
 
 def cost(xs, ys):
-    return np.sum(np.square(weight*xs + bias - ys))
+    return np.square(weight*xs + bias - ys).sum()
 
 def main():
     x, y = buildTrainingSet()
