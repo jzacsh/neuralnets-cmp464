@@ -50,15 +50,15 @@ class TrainingSet:
 
 def main():
     print("HARDCODED training set:")
-    ts = TrainingSet(np.array([0, 1]), np.array([1, -1]))
-    print("mimized to:\t%s" % (ts.randGuessMimizes().x))
-    print("cost at above:\t%s\n" %(ts.costof(-2, 1)))
+    trivialSet = TrainingSet(np.array([0, 1]), np.array([1, -1]))
+    print("mimized to:\t%s" % (trivialSet.randGuessMimizes().x))
+    print("cost at above:\t%s\n" %(trivialSet.costof(-2, 1)))
 
     print("RANDOM training set:")
-    ts = TrainingSet.buildRandomTrainer()
-    minimal = ts.randGuessMimizes()
+    randSet = TrainingSet.buildRandomTrainer()
+    minimal = randSet.randGuessMimizes()
     print("mimized to:\t%s" % (minimal.x))
-    print("cost at above:\t%s\n" %(ts.costof(minimal.x[0], minimal.x[1])))
+    print("cost at above:\t%s\n" %(randSet.costof(minimal.x[0], minimal.x[1])))
 
 if __name__ == '__main__':
     main()
