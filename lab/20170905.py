@@ -55,7 +55,8 @@ def main():
     print("cost at above:\t%s\n" %(ts.costof(-2, 1)))
 
     print("RANDOM training set:")
-    minimal = TrainingSet.buildRandomTrainer().randGuessMimizes()
+    ts = TrainingSet.buildRandomTrainer()
+    minimal = ts.randGuessMimizes()
     print("mimized to:\t%s" % (minimal.x))
     print("cost at above:\t%s\n" %(ts.costof(minimal.x[0], minimal.x[1])))
 
