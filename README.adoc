@@ -7,6 +7,7 @@
 :installtf: {_installtf_}#determine_how_to_install_tensorflow
 :afterinsttf: {_installtf_}#next_steps
 :validatettf: {_installtf_}#ValidateYourInstallation
+:travisciuri: https://travis-ci.org/jzacsh/neuralnets-cmp464
 
 Personal course work for {cmp464}[CMP-464 Neural Networks] with
 {profhome}[Professor Schneider] at Lehman College, Fall 2017.
@@ -25,6 +26,8 @@ $ source srcactivate
 === `cd ./lab/` for in-class work
 
 Under the `./lab/` dir...
+
+image:{travisciuri}.svg?branch=master["Build Status", link="{travisciuri}"]
 
 .to actively run a file via unit tests
 ----
