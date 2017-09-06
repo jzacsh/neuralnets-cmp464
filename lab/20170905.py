@@ -9,9 +9,6 @@ from mpl_toolkits.mplot3d import Axes3D
 from scipy.optimize import minimize
 import matplotlib.pyplot as plt
 
-
-
-
 class TrainingSet:
     def __init__(self, inputs, labels):
         self.inputs = inputs
@@ -48,17 +45,18 @@ class TrainingSet:
         #print("y scalars, of shape: %s\n%s" % (labels.shape, labels))
         return TrainingSet(inputs, labels)
 
+
+def reportSet(set):
+    mind = set.randGuessMimizes()
+    print("mimized to:\t%s" % (mind.x))
+    print("cost at above:\t%s\n" %(set.costof(mind.x[0], mind.x[1])))
+
 def main():
-    print("HARDCODED training set:")
-    trivialSet = TrainingSet(np.array([0, 1]), np.array([1, -1]))
-    print("mimized to:\t%s" % (trivialSet.randGuessMimizes().x))
-    print("cost at above:\t%s\n" %(trivialSet.costof(-2, 1)))
+    print("HARDCODED training set [should be mimize to: -2, 1]:")
+    reportSet(TrainingSet(np.array([0, 1]), np.array([1, -1])))
 
     print("RANDOM training set:")
-    randSet = TrainingSet.buildRandomTrainer()
-    minimal = randSet.randGuessMimizes()
-    print("mimized to:\t%s" % (minimal.x))
-    print("cost at above:\t%s\n" %(randSet.costof(minimal.x[0], minimal.x[1])))
+    reportSet(TrainingSet.buildRandomTrainer())
 
 if __name__ == '__main__':
     main()
