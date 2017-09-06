@@ -21,7 +21,7 @@ before_install:
   - export PATH=/home/travis/miniconda2/bin:$PATH
   - conda update --yes conda
 install:
-  - conda install --yes python=$TRAVIS_PYTHON_VERSION scipy numpy matplotlib scikit-learn scikit-image graphviz
+  - conda install --yes scipy numpy matplotlib scikit-learn scikit-image graphviz
   - easy_install -U pip
 notifications:
     email:
