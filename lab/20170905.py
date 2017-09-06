@@ -9,8 +9,8 @@ from mpl_toolkits.mplot3d import Axes3D
 from scipy.optimize import minimize
 import matplotlib.pyplot as plt
 
-weight=0.5
-bias=0.2
+
+
 
 class TrainingSet:
     def __init__(self, inputs, labels):
