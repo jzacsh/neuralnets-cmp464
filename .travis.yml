@@ -2,8 +2,6 @@ script: cd lab/ && make all
 addons:
   apt:
     packages:
-    - pip
-    - pip3
     - python3-tk
 
 lgoanguage: python3
