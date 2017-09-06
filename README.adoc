@@ -22,6 +22,28 @@ you followed <<installing, setup instructions>>
 $ source srcactivate
 ----
 
+=== `cd ./lab/` for in-class work
+
+Under the `./lab/` dir...
+
+.to actively run a file via unit tests
+----
+$ make test
+python3 lab20170905_test.py
+..
+ ----------------------------------------------------------------------
+Ran 2 tests in 0.173s
+
+OK
+----
+
+.to actively re-run a file with printf debugging
+----
+$ make current # default recipe
+python3 lab20170905.py
+rand set's cost was 0.0000000002, for minimization to: [ -2.36923935e-06  -9.99971761e-01]
+----
+
 [[installing]]
 == install & setup for course or fresh clones
 

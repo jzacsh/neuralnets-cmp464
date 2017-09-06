@@ -25,17 +25,18 @@ class TrainingSet:
     def costViaSquare(self, weight, bias):
         return np.square(weight*self.inputs + bias - self.labels).sum()
 
-    def randGuessMimizes(self):
+    def randGuessMimizes(self, debugMode=False):
         for i in range(0, 5):
             initialGuess = np.random.randn(2)
             res = minimize(self.costhandler, initialGuess, method='Nelder-Mead')
-            print("\tminimized: %s\t[init guess #%d: %s]" %(res.x, i, initialGuess))
+            if debugMode:
+                print("\tminimized: %s\t[init guess #%d: %s]" %(res.x, i, initialGuess))
 
-        print("context:\n\tx: %s\n\ty: %s" %(self.inputs, self.labels))
+        if debugMode:
+            print("context:\n\tx: %s\n\ty: %s" %(self.inputs, self.labels))
         return res # whatever the last mimizer returned
 
-    def buildRandomTrainer():
-        setsize=2
+    def buildRandomTrainer(setsize=2):
         inputs = 10*np.random.randn(setsize)
         # see: https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.shape.html
         #print("x scalars, of shape: %s\n%s" % (inputs.shape, inputs))
@@ -45,18 +46,11 @@ class TrainingSet:
         #print("y scalars, of shape: %s\n%s" % (labels.shape, labels))
         return TrainingSet(inputs, labels)
 
-
-def reportSet(set):
-    mind = set.randGuessMimizes()
-    print("mimized to:\t%s" % (mind.x))
-    print("cost at above:\t%s\n" %(set.costof(mind.x[0], mind.x[1])))
-
 def main():
-    print("HARDCODED training set [should be mimize to: -2, 1]:")
-    reportSet(TrainingSet(np.array([0, 1]), np.array([1, -1])))
-
-    print("RANDOM training set:")
-    reportSet(TrainingSet.buildRandomTrainer())
+    set = TrainingSet.buildRandomTrainer()
+    minimd = set.randGuessMimizes()
+    print("rand set's cost was %0.010f, for minimization to: %s" %
+            (set.costof(minimd.x[0], minimd.x[1]), minimd.x))
 
 if __name__ == '__main__':
     main()
