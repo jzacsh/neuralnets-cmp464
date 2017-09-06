@@ -13,9 +13,9 @@ weight=0.5
 bias=0.2
 
 class TrainingSet:
-    def __init__(self, x, y):
-        self.xvals = x
-        self.yvals = y
+    def __init__(self, inputs, labels):
+        self.inputs = inputs
+        self.labels = labels
 
     def costhandler(self, weightAndBias):
         """Handler for numpy's minimize() function"""
@@ -26,7 +26,7 @@ class TrainingSet:
         return self.costViaSquare(weight, bias)
 
     def costViaSquare(self, weight, bias):
-        return np.square(weight*self.xvals + bias - self.yvals).sum()
+        return np.square(weight*self.inputs + bias - self.labels).sum()
 
     def randGuessMimizes(self):
         for i in range(0, 5):
@@ -34,19 +34,19 @@ class TrainingSet:
             res = minimize(self.costhandler, initialGuess, method='Nelder-Mead')
             print("\tminimized: %s\t[init guess #%d: %s]" %(res.x, i, initialGuess))
 
-        print("context:\n\tx: %s\n\ty: %s" %(self.xvals, self.yvals))
+        print("context:\n\tx: %s\n\ty: %s" %(self.inputs, self.labels))
         return res # whatever the last mimizer returned
 
     def buildRandomTrainer():
         setsize=2
-        xvals = 10*np.random.randn(setsize)
+        inputs = 10*np.random.randn(setsize)
         # see: https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.shape.html
-        #print("x scalars, of shape: %s\n%s" % (xvals.shape, xvals))
+        #print("x scalars, of shape: %s\n%s" % (inputs.shape, inputs))
 
-        # yvals subset of {1, -1}
-        yvals = 2*np.random.randint(size=setsize, low=0, high=2)-1
-        #print("y scalars, of shape: %s\n%s" % (yvals.shape, yvals))
-        return TrainingSet(xvals, yvals)
+        # labels subset of {1, -1}
+        labels = 2*np.random.randint(size=setsize, low=0, high=2)-1
+        #print("y scalars, of shape: %s\n%s" % (labels.shape, labels))
+        return TrainingSet(inputs, labels)
 
 def main():
     print("HARDCODED training set:")
