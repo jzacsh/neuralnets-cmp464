@@ -6,22 +6,14 @@ addons:
     - python3-tk
     - python3-numpy
     - python3-scipy
-
-matrix:
-  include:
-    - python: "3.5"
-      env: DEPS="scipy numpy matplotlib scikit-learn scikit-image graphviz"
-
+python:
+  - "3.5"
 virtualenv:
   system_site_packages: true
 before_install:
-  - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
-  - chmod +x miniconda.sh
-  - ./miniconda.sh -b
-  - export PATH=/home/travis/miniconda2/bin:$PATH
-  - conda update --yes conda
+  - pip install --upgrade pip setuptools wheel
 install:
-  - conda install --yes scipy numpy matplotlib scikit-learn scikit-image graphviz
+  - pip install --only-binary=numpy,scipy numpy scipy matplotlib scikit-learn scikit-image graphviz
   - easy_install -U pip
 notifications:
     email:
