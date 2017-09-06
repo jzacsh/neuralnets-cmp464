@@ -18,11 +18,9 @@ before_install:
   - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
   - chmod +x miniconda.sh
   - ./miniconda.sh -b
-  - export PATH=/home/travis/miniconda/bin:$PATH
-  - conda update --yes conda
+  - /home/travis/miniconda/bin/conda update --yes conda
 install:
-  - export PATH=/home/travis/miniconda/bin:$PATH
-  - conda install --yes python=$TRAVIS_PYTHON_VERSION scipy numpy matplotlib scikit-learn scikit-image graphviz
+  - /home/travis/miniconda/bin/conda install --yes python=$TRAVIS_PYTHON_VERSION scipy numpy matplotlib scikit-learn scikit-image graphviz
   - easy_install -U pip
 notifications:
     email:
