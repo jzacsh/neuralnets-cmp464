@@ -3,6 +3,8 @@ addons:
   apt:
     packages:
     - python3-tk
+    - python3-numpy
+    - python3-scipy
 
 language: python3
 python:
@@ -10,6 +12,8 @@ python:
 install:
   - easy_install -U pip
   - pip install scipy numpy matplotlib scikit-learn scikit-image graphviz
+virtualenv:
+  system_site_packages: true
 notifications:
     email:
           on_success: never
