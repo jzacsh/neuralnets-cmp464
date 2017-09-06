@@ -1,7 +1,7 @@
 script: make all
 before_script:
-    - apt install pip{,3} python3-tk
-    - pip3 install scipy numpy matplotlib scikit-{learn,image} graphviz
+    - sudo apt install pip{,3} python3-tk
+    - sudo pip3 install scipy numpy matplotlib scikit-{learn,image} graphviz
     - virtualenv --system-site-packages -p python3 .tf/
     - source srcactivate
     - easy_install -U pip
