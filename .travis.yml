@@ -9,12 +9,7 @@ python:
   - "3.5"
 install:
   - easy_install -U pip
-  - pip install scipy
-  - pip install numpy
-  - pip install matplotlib
-  - pip install scikit-learn
-  - pip install scikit-image
-  - pip install graphviz
+  - pip install scipy numpy matplotlib scikit-learn scikit-image graphviz
 notifications:
     email:
           on_success: never
