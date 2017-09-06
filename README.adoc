@@ -8,6 +8,7 @@
 :afterinsttf: {_installtf_}#next_steps
 :validatettf: {_installtf_}#ValidateYourInstallation
 :travisciuri: https://travis-ci.org/jzacsh/neuralnets-cmp464
+:traviscibug: https://travis-ci.org/jzacsh/neuralnets-cmp464/builds/272568257#L693
 
 Personal course work for {cmp464}[CMP-464 Neural Networks] with
 {profhome}[Professor Schneider] at Lehman College, Fall 2017.
@@ -27,11 +28,9 @@ $ source srcactivate
 
 Under the `./lab/` dir...
 
-image:{travisciuri}.svg?branch=master["Build Status", link="{travisciuri}"]
-
 .to actively run a file via unit tests
 ----
-$ make test
+$ make test # <1>
 python3 lab20170905_test.py
 ..
  ----------------------------------------------------------------------
@@ -39,6 +38,8 @@ Ran 2 tests in 0.173s
 
 OK
 ----
+<1> should work on each `git push`, but {traviscibug}[travis-ci.org has proven
+difficult to setup] image:{travisciuri}.svg?branch=master["Build Status", link="{travisciuri}"]
 
 .to actively re-run a file with printf debugging
 ----
