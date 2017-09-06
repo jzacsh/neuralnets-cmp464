@@ -15,6 +15,8 @@ before_install:
 install:
   - pip install --only-binary=numpy,scipy numpy scipy matplotlib scikit-learn scikit-image graphviz
   - easy_install -U pip
+before_script:
+  - export PYTHONPATH=$PYTHONPATH:$(pwd)/lab
 notifications:
     email:
           on_success: never
