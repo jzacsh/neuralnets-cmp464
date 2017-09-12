@@ -49,7 +49,7 @@ class TrainingSet:
 def main():
     set = TrainingSet.buildRandomTrainer()
     minimd = set.randGuessMimizes()
-    print("rand set's cost was %0.010f, for minimization to: %s" %
+    print("rand set's cost was %0.010f, for minimization to: %s\n" %
             (set.costof(minimd.x[0], minimd.x[1]), minimd.x))
 
     #grid of points
