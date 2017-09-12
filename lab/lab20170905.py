@@ -54,16 +54,18 @@ def main():
 
     # grid of sampling points
     sampleWindow = 4
+    sampleFrom = -(sampleWindow/2)
+    sampleTo = sampleWindow/2
     sampleRate = 0.05
     weights, biases = meshgrid(
-            np.arange(minimd.x[0]-(sampleWindow/2),minimd.x[0]+(sampleWindow/2),sampleRate),
-            np.arange(minimd.x[1]-(sampleWindow/2),minimd.x[1]+(sampleWindow/2),sampleRate))
+            np.arange(minimd.x[0]+sampleFrom,minimd.x[0]+sampleTo,sampleRate),
+            np.arange(minimd.x[1]+sampleFrom,minimd.x[1]+sampleTo,sampleRate))
     costs = np.array([
         set.costof(w,b) for w,b in zip(np.ravel(weights),np.ravel(biases))
     ]).reshape(weights.shape)
 
-    print("The costs (shape=%s) after sampling from -%0.2f to %0.2f @%0.2f:\n%s\n\n"
-          %(costs.shape, sampleWindow/2, sampleWindow/2, sampleRate, costs))
+    print("The costs (shape=%s) after sampling from %0.2f to %0.2f @%0.3f:\n%s\n\n"
+          %(costs.shape, sampleFrom, sampleTo, sampleRate, costs))
 
     # 2d-graphing machinery
     ax = plt.figure().add_subplot(111, projection='3d')
