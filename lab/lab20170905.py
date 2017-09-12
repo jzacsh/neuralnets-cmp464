@@ -4,7 +4,7 @@ Created 2017-09-05 10:16:55-04:00
 '''
 
 import numpy as np
-from pylab import meshgrid
+import pylab
 from mpl_toolkits.mplot3d import Axes3D
 from scipy.optimize import minimize
 import matplotlib.pyplot as plt
@@ -46,6 +46,18 @@ class TrainingSet:
         #print("y scalars, of shape: %s\n%s" % (labels.shape, labels))
         return TrainingSet(inputs, labels)
 
+def sampleWeightBiasSpace(weight, bias):
+    sampleWindow = 4
+    sampleFrom = -(sampleWindow/2)
+    sampleTo = sampleWindow/2
+    sampleRate = 0.05
+
+    print("\tsampling from %0.2f to %0.2f @%0.3f around weight=%0.3f, bias=%0.3f\n"%(
+        sampleFrom, sampleTo, sampleRate, weight, bias))
+    return pylab.meshgrid(
+            np.arange(weight+sampleFrom,weight+sampleTo,sampleRate),
+            np.arange(bias+sampleFrom,bias+sampleTo,sampleRate))
+
 def main():
     set = TrainingSet.buildRandomTrainer()
     minimd = set.randGuessMimizes()
@@ -53,19 +65,13 @@ def main():
             (set.costof(minimd.x[0], minimd.x[1]), minimd.x))
 
     # grid of sampling points
-    sampleWindow = 4
-    sampleFrom = -(sampleWindow/2)
-    sampleTo = sampleWindow/2
-    sampleRate = 0.05
-    weights, biases = meshgrid(
-            np.arange(minimd.x[0]+sampleFrom,minimd.x[0]+sampleTo,sampleRate),
-            np.arange(minimd.x[1]+sampleFrom,minimd.x[1]+sampleTo,sampleRate))
+    weights, biases = sampleWeightBiasSpace(minimd.x[1], minimd.x[0])
     costs = np.array([
         set.costof(w,b) for w,b in zip(np.ravel(weights),np.ravel(biases))
     ]).reshape(weights.shape)
 
-    print("The costs (shape=%s) after sampling from %0.2f to %0.2f @%0.3f:\n%s\n\n"
-          %(costs.shape, sampleFrom, sampleTo, sampleRate, costs))
+    print("The costs (shape=%s) after sampling:\n%s\n\n"
+          %(costs.shape, costs))
 
     # 2d-graphing machinery
     ax = plt.figure().add_subplot(111, projection='3d')
