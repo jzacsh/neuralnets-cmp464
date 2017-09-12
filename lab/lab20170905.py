@@ -52,13 +52,11 @@ def main():
     print("rand set's cost was %0.010f, for minimization to: %s" %
             (set.costof(minimd.x[0], minimd.x[1]), minimd.x))
 
-    ax = plt.figure().add_subplot(111, projection='3d')
-
     #grid of points
-    weights,biases= meshgrid(
+    weights, biases = meshgrid(
             np.arange(minimd.x[0]-2,minimd.x[0]+2,.05),
             np.arange(minimd.x[1]-2,minimd.x[1]+2,.05))
-    costs=np.array([
+    costs = np.array([
         set.costof(w,b) for w,b in zip(np.ravel(weights),np.ravel(biases))
     ]).reshape(weights.shape)
 
@@ -66,11 +64,11 @@ def main():
           %(costs, costs.shape))
 
     # 2d-graphing machinery
+    ax = plt.figure().add_subplot(111, projection='3d')
     ax.plot_surface(weights, biases, costs)
     ax.set_xlabel('weights')
     ax.set_ylabel('biases')
     ax.set_zlabel('costs')
-
     plt.show()
 
 if __name__ == '__main__':
