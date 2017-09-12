@@ -52,16 +52,18 @@ def main():
     print("rand set's cost was %0.010f, for minimization to: %s\n" %
             (set.costof(minimd.x[0], minimd.x[1]), minimd.x))
 
-    #grid of points
+    # grid of sampling points
+    sampleWindow = 4
+    sampleRate = 0.05
     weights, biases = meshgrid(
-            np.arange(minimd.x[0]-2,minimd.x[0]+2,.05),
-            np.arange(minimd.x[1]-2,minimd.x[1]+2,.05))
+            np.arange(minimd.x[0]-(sampleWindow/2),minimd.x[0]+(sampleWindow/2),sampleRate),
+            np.arange(minimd.x[1]-(sampleWindow/2),minimd.x[1]+(sampleWindow/2),sampleRate))
     costs = np.array([
         set.costof(w,b) for w,b in zip(np.ravel(weights),np.ravel(biases))
     ]).reshape(weights.shape)
 
-    print("the costs after applying function: %s\n\tand shape of costs:\n%s\n"
-          %(costs, costs.shape))
+    print("The costs (shape=%s) after sampling from -%0.2f to %0.2f @%0.2f:\n%s\n\n"
+          %(costs.shape, sampleWindow/2, sampleWindow/2, sampleRate, costs))
 
     # 2d-graphing machinery
     ax = plt.figure().add_subplot(111, projection='3d')
