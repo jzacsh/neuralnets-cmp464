@@ -52,21 +52,22 @@ def main():
     print("rand set's cost was %0.010f, for minimization to: %s" %
             (set.costof(minimd.x[0], minimd.x[1]), minimd.x))
 
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
-    w = np.arange(minimd.x[0]-2,minimd.x[0]+2,.05)
-    b = np.arange(minimd.x[1]-2,minimd.x[1]+2,.05)
-    W,B= meshgrid(w,b) #grid of points
+    ax = plt.figure().add_subplot(111, projection='3d')
 
-    zs=np.array([set.costof(w,b) for w,b in zip(np.ravel(W),np.ravel(B))]) #note is
-    Z = zs.reshape(W.shape)
+    #grid of points
+    W,B= meshgrid(
+            np.arange(minimd.x[0]-2,minimd.x[0]+2,.05),
+            np.arange(minimd.x[1]-2,minimd.x[1]+2,.05))
+    Z=np.array([
+        set.costof(w,b) for w,b in zip(np.ravel(W),np.ravel(B))
+    ]).reshape(W.shape)
     print(" \n  the Z after applying function \n",Z,"\n and shape of Z \n",Z.shape)
 
+    # 2d-graphing machinery
     ax.plot_surface(W, B, Z)
-
-    ax.set_xlabel('W Label')
-    ax.set_ylabel('B Label')
-    ax.set_zlabel('Z Label')
+    ax.set_xlabel('inputs')
+    ax.set_ylabel('outputs')
+    ax.set_zlabel('costs')
 
     plt.show()
 
