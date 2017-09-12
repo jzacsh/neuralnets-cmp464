@@ -55,18 +55,20 @@ def main():
     ax = plt.figure().add_subplot(111, projection='3d')
 
     #grid of points
-    W,B= meshgrid(
+    weights,biases= meshgrid(
             np.arange(minimd.x[0]-2,minimd.x[0]+2,.05),
             np.arange(minimd.x[1]-2,minimd.x[1]+2,.05))
-    Z=np.array([
-        set.costof(w,b) for w,b in zip(np.ravel(W),np.ravel(B))
-    ]).reshape(W.shape)
-    print(" \n  the Z after applying function \n",Z,"\n and shape of Z \n",Z.shape)
+    costs=np.array([
+        set.costof(w,b) for w,b in zip(np.ravel(weights),np.ravel(biases))
+    ]).reshape(weights.shape)
+
+    print("the costs after applying function: %s\n\tand shape of costs:\n%s\n"
+          %(costs, costs.shape))
 
     # 2d-graphing machinery
-    ax.plot_surface(W, B, Z)
-    ax.set_xlabel('inputs')
-    ax.set_ylabel('outputs')
+    ax.plot_surface(weights, biases, costs)
+    ax.set_xlabel('weights')
+    ax.set_ylabel('biases')
     ax.set_zlabel('costs')
 
     plt.show()
