@@ -25,6 +25,9 @@ class TrainingSet:
     def costViaSquare(self, weight, bias):
         return np.square(weight*self.inputs + bias - self.labels).sum()
 
+    def costViaAbsVal(self, weight, bias):
+        return np.absolute(weight*self.inputs + bias - self.labels).sum()
+
     def randGuessMimizes(self, debugMode=False):
         for i in range(0, 5):
             initialGuess = np.random.randn(2)
@@ -47,9 +50,8 @@ class TrainingSet:
         return TrainingSet(inputs, labels)
 
 def sampleWeightBiasSpace(weight, bias):
-    sampleWindow = 4
-    sampleFrom = -(sampleWindow/2)
-    sampleTo = sampleWindow/2
+    sampleFrom = -5
+    sampleTo = 5
     sampleRate = 0.05
 
     print("\tsampling from %0.2f to %0.2f @%0.3f around weight=%0.3f, bias=%0.3f\n"%(
