@@ -59,7 +59,7 @@ repo.
 
 Installed software {cmp464install}[based on instructions]:
 ----
-$ sudo apt install pip{,3} python3-tk
+$ sudo apt install python{,3}-pip python3-tk
 $ sudo pip3 install scipy numpy matplotlib scikit-{learn,image} graphviz
 ----
 
