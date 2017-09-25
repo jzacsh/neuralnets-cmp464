@@ -60,7 +60,7 @@ repo.
 Installed software {cmp464install}[based on instructions]:
 ----
 $ sudo apt install python{,3}-pip python3-tk virtualenv
-$ sudo pip3 install scipy numpy matplotlib scikit-{learn,image} graphviz
+$ pip3 install scipy numpy matplotlib scikit-{learn,image} graphviz
 ----
 
 Following {installtf}[tensorflow's `virtualenv` recommendation]:
