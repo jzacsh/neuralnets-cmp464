@@ -9,6 +9,12 @@ from mpl_toolkits.mplot3d import Axes3D
 from scipy.optimize import minimize
 from matplotlib import pyplot
 
+def costsViaSquare(inputs, outputs, weight, bias):
+    return np.square(weight*inputs + bias - outputs)
+
+def costsViaAbsVal(inputs, outputs, weight, bias):
+    return np.absolute(weight*inputs + bias - outputs)
+
 class TrainingSet:
     def __init__(self, inputs, labels):
         self.inputs = inputs
@@ -20,13 +26,7 @@ class TrainingSet:
 
     def costof(self, weight, bias):
         """calculates cost using default methodology"""
-        return self.costViaSquare(weight, bias)
-
-    def costViaSquare(self, weight, bias):
-        return np.square(weight*self.inputs + bias - self.labels).sum()
-
-    def costViaAbsVal(self, weight, bias):
-        return np.absolute(weight*self.inputs + bias - self.labels).sum()
+        return costsViaSquare(self.inputs, self.labels, weight, bias).sum()
 
     def randGuessMimizes(self, debugMode=False):
         for i in range(0, 5):
