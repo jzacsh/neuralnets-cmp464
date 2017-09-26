@@ -7,7 +7,7 @@ import numpy as np
 import pylab
 from mpl_toolkits.mplot3d import Axes3D
 from scipy.optimize import minimize
-import matplotlib.pyplot as plt
+from matplotlib import pyplot
 
 class TrainingSet:
     def __init__(self, inputs, labels):
@@ -76,12 +76,12 @@ def main():
           %(costs.shape, costs))
 
     # 2d-graphing machinery
-    ax = plt.figure().add_subplot(111, projection='3d')
+    ax = pyplot.figure().add_subplot(111, projection='3d')
     ax.plot_surface(weights, biases, costs)
     ax.set_xlabel('weights')
     ax.set_ylabel('biases')
     ax.set_zlabel('costs')
-    plt.show()
+    pyplot.show()
 
 if __name__ == '__main__':
     main()
