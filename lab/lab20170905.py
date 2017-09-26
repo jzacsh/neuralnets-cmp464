@@ -69,6 +69,24 @@ def main():
     print("rand set's cost was %0.010f, for minimization to: %s\n\tminimize success: %s\n" %
             (set.costof(optimalWeight, optimalBias), minimd.x, minimd.success))
 
+    #TODO fix this line + scatterplot graphing section; totally broken
+    # plot coordinates of (input,costs) and graph the minimized result
+#   ax = pyplot.figure().add_subplot(111, projection='3d')
+#
+#   # graph a line of our minimized (optimal) weight + bias:
+#   #TODO: graph a line on pyplot; subplot??
+#   #mx+b form is: m=optimalWeight, b=optimalBias
+#
+#   #TODO: graph plot of dots, whose x,y coords are:
+#   #x = set.inputs
+#   #y = set.labels
+#
+#   #TODO: place above two plots on single x-y plane:
+    costs = costsViaSquare(set.inputs, set.labels, optimalWeight, optimalBias)
+    pyplot.scatter(set.inputs, costs)
+    pyplot.plot(set.inputs, optimalWeight*set.inputs+optimalBias, '-')
+
+
     # grid of sampling points
     weights, biases = sampleWeightBiasSpace(optimalWeight, optimalBias)
     costs = np.array([
