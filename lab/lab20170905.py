@@ -63,8 +63,8 @@ def sampleWeightBiasSpace(weight, bias):
 def main():
     set = TrainingSet.buildRandomTrainer()
     minimd = set.randGuessMimizes()
-    print("rand set's cost was %0.010f, for minimization to: %s\n" %
-            (set.costof(minimd.x[0], minimd.x[1]), minimd.x))
+    print("rand set's cost was %0.010f, for minimization to: %s\n\tminimize success: %s\n" %
+            (set.costof(minimd.x[0], minimd.x[1]), minimd.x, minimd.success))
 
     # grid of sampling points
     weights, biases = sampleWeightBiasSpace(minimd.x[1], minimd.x[0])
