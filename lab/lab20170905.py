@@ -53,8 +53,8 @@ def generateWeightBiasSpace(weight, bias):
     sampleTo = 5
     sampleRate = 0.5
 
-    print("\tsampling from %0.2f to %0.2f @%0.3f around weight=%0.3f, bias=%0.3f\n"%(
-        sampleFrom, sampleTo, sampleRate, weight, bias))
+    print("\tgenerating weights & biases\n\t\t%.2f <- {weight=%0.3f, bias=%0.3f} -> %.2f @%.3f steps\n"%(
+        sampleFrom, weight, bias, sampleTo, sampleRate))
     return np.meshgrid(
             np.arange(weight+sampleFrom,weight+sampleTo,sampleRate),
             np.arange(bias+sampleFrom,bias+sampleTo,sampleRate))
