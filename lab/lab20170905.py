@@ -4,7 +4,7 @@ Created 2017-09-05 10:16:55-04:00
 '''
 
 import numpy as np
-from mpl_toolkits.mplot3d import Axes3D
+from mpl_toolkits.mplot3d import Axes3D # needed for param plot='3d' below
 from scipy.optimize import minimize
 from matplotlib import pyplot
 
@@ -29,17 +29,17 @@ class TrainingSet:
 
     def randGuessMimizes(self, debugMode=False):
         for i in range(0, 5):
-            initialGuess = np.random.randn(2)
-            res = minimize(self.costhandler, initialGuess, method='Nelder-Mead')
+            ithGuess = np.random.randn(2) # two guesses: one for weight, one for bias
+            res = minimize(self.costhandler, ithGuess, method='Nelder-Mead')
             if debugMode:
-                print("\tminimized: %s\t[init guess #%d: %s]" %(res.x, i, initialGuess))
+                print("\tminimized: %s\t[init guess #%d: %s]" %(res.x, i, ithGuess))
 
         if debugMode:
             print("context:\n\tx: %s\n\ty: %s" %(self.inputs, self.labels))
         return res # whatever the last mimizer returned
 
     def buildRandomTrainer(setsize=2):
-        inputs = 10*np.random.randn(setsize)
+        inputs = np.random.randn(setsize) * 10 # entry-wise multiply by 10
         # see: https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.shape.html
         #print("x scalars, of shape: %s\n%s" % (inputs.shape, inputs))
 
@@ -48,7 +48,7 @@ class TrainingSet:
         #print("y scalars, of shape: %s\n%s" % (labels.shape, labels))
         return TrainingSet(inputs, labels)
 
-def sampleWeightBiasSpace(weight, bias):
+def generateWeightBiasSpace(weight, bias):
     sampleFrom = -5
     sampleTo = 5
     sampleRate = 0.05
@@ -87,7 +87,7 @@ def main():
 
 
     # grid of sampling points
-    weights, biases = sampleWeightBiasSpace(optimalWeight, optimalBias)
+    weights, biases = generateWeightBiasSpace(optimalWeight, optimalBias)
     costs = np.array([
         set.costof(w,b) for w,b in zip(np.ravel(weights),np.ravel(biases))
     ]).reshape(weights.shape)
