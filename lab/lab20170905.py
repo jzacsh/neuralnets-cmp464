@@ -94,6 +94,8 @@ def main():
 
     # grid of sampling points
     weights, biases = generateWeightBiasSpace(optimalWeight, optimalBias)
+
+    # calc cost of field of weight/biases surrounding our supposed optimal
     costs = np.array([
         set.costof(w,b) for w,b in zip(np.ravel(weights),np.ravel(biases))
     ]).reshape(weights.shape)
