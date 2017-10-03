@@ -16,8 +16,8 @@ def costsViaAbsVal(inputs, outputs, weight, bias):
 
 class TrainingSet:
     def __init__(self, inputs, labels):
-        self.inputs = inputs
-        self.labels = labels
+        self.inputs = np.array(inputs)
+        self.labels = np.array(labels)
 
     def costhandler(self, weightAndBias):
         """Handler for numpy's minimize() function"""
