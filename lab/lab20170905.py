@@ -65,8 +65,13 @@ def main():
     optimalWeight = minimd.x[0]
     optimalBias = minimd.x[1]
 
-    print("rand set's cost was %0.010f, for minimization to: %s\n\tminimize success: %s\n" %
-            (set.costof(optimalWeight, optimalBias), minimd.x, minimd.success))
+    print("""rand set's cost was %0.05f
+    for minimization with: (optimal) weight=%0.04f, (optimal) bias=%0.04f
+    [minimize success: %s]""" % (
+        set.costof(optimalWeight, optimalBias),
+        optimalWeight, optimalBias,
+        minimd.success
+    ))
 
     #TODO fix this line + scatterplot graphing section; totally broken
     # plot coordinates of (input,costs) and graph the minimized result
