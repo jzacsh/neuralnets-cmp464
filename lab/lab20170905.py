@@ -7,7 +7,13 @@ import numpy as np
 import pylab
 from mpl_toolkits.mplot3d import Axes3D
 from scipy.optimize import minimize
-import matplotlib.pyplot as plt
+from matplotlib import pyplot
+
+def costsViaSquare(inputs, outputs, weight, bias):
+    return np.square(weight*inputs + bias - outputs)
+
+def costsViaAbsVal(inputs, outputs, weight, bias):
+    return np.absolute(weight*inputs + bias - outputs)
 
 class TrainingSet:
     def __init__(self, inputs, labels):
@@ -20,13 +26,7 @@ class TrainingSet:
 
     def costof(self, weight, bias):
         """calculates cost using default methodology"""
-        return self.costViaSquare(weight, bias)
-
-    def costViaSquare(self, weight, bias):
-        return np.square(weight*self.inputs + bias - self.labels).sum()
-
-    def costViaAbsVal(self, weight, bias):
-        return np.absolute(weight*self.inputs + bias - self.labels).sum()
+        return costsViaSquare(self.inputs, self.labels, weight, bias).sum()
 
     def randGuessMimizes(self, debugMode=False):
         for i in range(0, 5):
@@ -63,11 +63,32 @@ def sampleWeightBiasSpace(weight, bias):
 def main():
     set = TrainingSet.buildRandomTrainer()
     minimd = set.randGuessMimizes()
-    print("rand set's cost was %0.010f, for minimization to: %s\n" %
-            (set.costof(minimd.x[0], minimd.x[1]), minimd.x))
+    optimalWeight = minimd.x[1]
+    optimalBias = minimd.x[0]
+
+    print("rand set's cost was %0.010f, for minimization to: %s\n\tminimize success: %s\n" %
+            (set.costof(optimalWeight, optimalBias), minimd.x, minimd.success))
+
+    #TODO fix this line + scatterplot graphing section; totally broken
+    # plot coordinates of (input,costs) and graph the minimized result
+#   ax = pyplot.figure().add_subplot(111, projection='3d')
+#
+#   # graph a line of our minimized (optimal) weight + bias:
+#   #TODO: graph a line on pyplot; subplot??
+#   #mx+b form is: m=optimalWeight, b=optimalBias
+#
+#   #TODO: graph plot of dots, whose x,y coords are:
+#   #x = set.inputs
+#   #y = set.labels
+#
+#   #TODO: place above two plots on single x-y plane:
+    costs = costsViaSquare(set.inputs, set.labels, optimalWeight, optimalBias)
+    pyplot.scatter(set.inputs, costs)
+    pyplot.plot(set.inputs, optimalWeight*set.inputs+optimalBias, '-')
+
 
     # grid of sampling points
-    weights, biases = sampleWeightBiasSpace(minimd.x[1], minimd.x[0])
+    weights, biases = sampleWeightBiasSpace(optimalWeight, optimalBias)
     costs = np.array([
         set.costof(w,b) for w,b in zip(np.ravel(weights),np.ravel(biases))
     ]).reshape(weights.shape)
@@ -76,12 +97,12 @@ def main():
           %(costs.shape, costs))
 
     # 2d-graphing machinery
-    ax = plt.figure().add_subplot(111, projection='3d')
+    ax = pyplot.figure().add_subplot(111, projection='3d')
     ax.plot_surface(weights, biases, costs)
     ax.set_xlabel('weights')
     ax.set_ylabel('biases')
     ax.set_zlabel('costs')
-    plt.show()
+    pyplot.show()
 
 if __name__ == '__main__':
     main()
