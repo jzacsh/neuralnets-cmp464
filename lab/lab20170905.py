@@ -62,8 +62,8 @@ def sampleWeightBiasSpace(weight, bias):
 def main():
     set = TrainingSet.buildRandomTrainer()
     minimd = set.randGuessMimizes()
-    optimalWeight = minimd.x[1]
-    optimalBias = minimd.x[0]
+    optimalWeight = minimd.x[0]
+    optimalBias = minimd.x[1]
 
     print("rand set's cost was %0.010f, for minimization to: %s\n\tminimize success: %s\n" %
             (set.costof(optimalWeight, optimalBias), minimd.x, minimd.success))
