@@ -51,7 +51,7 @@ class TrainingSet:
 def generateWeightBiasSpace(weight, bias):
     sampleFrom = -5
     sampleTo = 5
-    sampleRate = 0.05
+    sampleRate = 0.5
 
     print("\tsampling from %0.2f to %0.2f @%0.3f around weight=%0.3f, bias=%0.3f\n"%(
         sampleFrom, sampleTo, sampleRate, weight, bias))
