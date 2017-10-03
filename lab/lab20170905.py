@@ -28,15 +28,18 @@ class TrainingSet:
         return costsViaSquare(self.inputs, self.labels, weight, bias).sum()
 
     def randGuessMimizes(self, debugMode=False):
+        """returns "optimal" weight, bias, success (ie: whether vals are trustworthy)"""
+        if debugMode:
+            print("randomly guessing & minimizing.... Knowns are\n\tx: %s\n\ty: %s" %(self.inputs, self.labels))
+
         for i in range(0, 5):
             ithGuess = np.random.randn(2) # two guesses: one for weight, one for bias
             res = minimize(self.costhandler, ithGuess, method='Nelder-Mead')
             if debugMode:
                 print("\tminimized: %s\t[init guess #%d: %s]" %(res.x, i, ithGuess))
 
-        if debugMode:
-            print("context:\n\tx: %s\n\ty: %s" %(self.inputs, self.labels))
-        return res # whatever the last mimizer returned
+        # whatever the last mimizer returned
+        return [ res.x[0], res.x[1], res.success ]
 
     def buildRandomTrainer(setsize=2):
         inputs = np.random.randn(setsize) * 10 # entry-wise multiply by 10
@@ -61,16 +64,14 @@ def generateWeightBiasSpace(weight, bias):
 
 def main():
     set = TrainingSet.buildRandomTrainer()
-    minimd = set.randGuessMimizes()
-    optimalWeight = minimd.x[0]
-    optimalBias = minimd.x[1]
+    optimalWeight, optimalBias, minimOK = set.randGuessMimizes()
 
     print("""rand set's cost was %0.05f
     for minimization with: (optimal) weight=%0.04f, (optimal) bias=%0.04f
     [minimize success: %s]""" % (
         set.costof(optimalWeight, optimalBias),
         optimalWeight, optimalBias,
-        minimd.success
+        minimOK
     ))
 
     #TODO fix this line + scatterplot graphing section; totally broken
