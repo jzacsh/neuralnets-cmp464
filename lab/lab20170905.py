@@ -4,7 +4,6 @@ Created 2017-09-05 10:16:55-04:00
 '''
 
 import numpy as np
-import pylab
 from mpl_toolkits.mplot3d import Axes3D
 from scipy.optimize import minimize
 from matplotlib import pyplot
@@ -56,7 +55,7 @@ def sampleWeightBiasSpace(weight, bias):
 
     print("\tsampling from %0.2f to %0.2f @%0.3f around weight=%0.3f, bias=%0.3f\n"%(
         sampleFrom, sampleTo, sampleRate, weight, bias))
-    return pylab.meshgrid(
+    return np.meshgrid(
             np.arange(weight+sampleFrom,weight+sampleTo,sampleRate),
             np.arange(bias+sampleFrom,bias+sampleTo,sampleRate))
 
