@@ -46,7 +46,7 @@ class TrainingSet:
                 print("\tminimized: %s\t[init guess #%d: %s]" %(res.x, i, ithGuess))
 
         # whatever the last mimizer returned
-        return [ res.x[0], res.x[1], res.success ]
+        return cleanMinim(res)
 
     def minimize(self, initialGuess, minimAlgo='Nelder-Mead'):
         return minimize(self.costhandler, initialGuess, method=minimAlgo)
@@ -60,6 +60,10 @@ class TrainingSet:
         labels = 2*np.random.randint(size=setsize, low=0, high=2)-1
         #print("y scalars, of shape: %s\n%s" % (labels.shape, labels))
         return TrainingSet(inputs, labels)
+
+def cleanMinim(minimizerResult):
+    """returns "optimal" weight, bias, success (ie: whether vals are trustworthy)"""
+    return [minimizerResult.x[0], minimizerResult.x[1], minimizerResult.success]
 
 def generateWeightBiasSpace(weight, bias):
     sampleFrom = -3
