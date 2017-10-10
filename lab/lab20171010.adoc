@@ -12,4 +12,4 @@
 ----
 
 instructions included link to {pythonFile}["annotated program as a python
-file"], which is now in ./labOct10.py
+file"], which is now in ./lab20171010.py
