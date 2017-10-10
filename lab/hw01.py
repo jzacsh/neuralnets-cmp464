@@ -128,15 +128,15 @@ def generateWeightBiasSpace(weight, bias):
             np.arange(weight+sampleFrom,weight+sampleTo,sampleRate),
             np.arange(bias+sampleFrom,bias+sampleTo,sampleRate))
 
-def main():
+def learnTruthTable(binaryOp, truthTableName):
     xorinputs = np.array([
         0, 0,
         0, 1,
         1, 0,
         1, 1
     ]).reshape(4,2)
-    xoroutputs = np.array([0, 1, 1, 0]).reshape(4,1)
-    set = TrainingSet("XOR Learning", xorinputs, xoroutputs, debugMode=True)
+    xoroutputs = np.array(binaryOp).reshape(4,1)
+    set = TrainingSet(truthTableName + " Truth Table", xorinputs, xoroutputs, debugMode=True)
     optimalWeight1, optimalWeight2, optimalBias, minimOK = cleanMinim(set.minimize(np.array([
         1,
         1,
@@ -154,6 +154,11 @@ def main():
             optimalBias).sum())
     )
     set.printManualLayers([optimalWeight1, optimalWeight2], optimalBias)
+
+def main():
+    learnTruthTable([0, 1, 1, 0], "XOR")
+    learnTruthTable([0, 1, 1, 1], "OR")
+    learnTruthTable([0, 0, 0, 1], "AND")
 
 if __name__ == '__main__':
     main()
