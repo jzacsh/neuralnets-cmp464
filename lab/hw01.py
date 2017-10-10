@@ -62,6 +62,16 @@ class TrainingSet:
         #print("y scalars, of shape: %s\n%s" % (labels.shape, labels))
         return TrainingSet(inputs, labels)
 
+    def printReport(self, optimalWeight, optimalBias, minimOK):
+        print("""%s set's cost was %0.05f
+        for minimization with: (optimal) weight=%0.04f, (optimal) bias=%0.04f
+        [minimize success: %s]""" % (
+            self.projectName,
+            self.costof(optimalWeight, optimalBias),
+            optimalWeight, optimalBias,
+            minimOK
+        ))
+
 def cleanMinim(minimizerResult):
     """returns "optimal" weight, bias, success (ie: whether vals are trustworthy)"""
     return [minimizerResult.x[0], minimizerResult.x[1], minimizerResult.success]
@@ -87,16 +97,9 @@ def main():
     set = TrainingSet("XOR Learning", xorinputs, xoroutputs, debugMode=True)
 # TODO(zacsh) figure out exactly what professor wants us to do with the xor
 # table...
-#   optimalWeight, optimalBias, minimOK = set.minimize(np.array([1, 1]))
+    optimalWeight, optimalBias, minimOK = cleanMinim(set.minimize(np.array([1, 1])))
 
-    print("""%s set's cost was %0.05f
-    for minimization with: (optimal) weight=%0.04f, (optimal) bias=%0.04f
-    [minimize success: %s]""" % (
-        "XOR Learning",
-        set.costof(optimalWeight, optimalBias),
-        optimalWeight, optimalBias,
-        minimOK
-    ))
+    set.printReport(optimalWeight, optimalBias, minimOK)
 
 if __name__ == '__main__':
     main()
