@@ -73,6 +73,7 @@ def generateWeightBiasSpace(weight, bias):
             np.arange(bias+sampleFrom,bias+sampleTo,sampleRate))
 
 def main():
+    projectName = "XOR Learning"
     xorinputs = np.meshgrid(
             [0, 0],
             [0, 1],
@@ -84,9 +85,10 @@ def main():
 # table...
 #   optimalWeight, optimalBias, minimOK = set.minimize(np.array([1, 1]))
 
-    print("""rand set's cost was %0.05f
+    print("""%s set's cost was %0.05f
     for minimization with: (optimal) weight=%0.04f, (optimal) bias=%0.04f
     [minimize success: %s]""" % (
+        projectName,
         set.costof(optimalWeight, optimalBias),
         optimalWeight, optimalBias,
         minimOK
