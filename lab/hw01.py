@@ -117,12 +117,13 @@ def generateWeightBiasSpace(weight, bias):
             np.arange(bias+sampleFrom,bias+sampleTo,sampleRate))
 
 def main():
-    xorinputs = np.meshgrid(
-            [0, 0],
-            [0, 1],
-            [1, 0],
-            [1, 1])
-    xoroutputs = np.meshgrid([0], [1], [1], [0])
+    xorinputs = np.array([
+        0, 0,
+        0, 1,
+        1, 0,
+        1, 1
+    ]).reshape(4,2)
+    xoroutputs = np.array([0, 1, 1, 0]).reshape(4,1)
     set = TrainingSet("XOR Learning", xorinputs, xoroutputs, debugMode=True)
 # TODO(zacsh) figure out exactly what professor wants us to do with the xor
 # table...
