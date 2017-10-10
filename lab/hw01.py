@@ -68,8 +68,8 @@ class TrainingSet:
         # internally??
 
         if self.debugMode:
-            print("minimizing for a %s set of free variables [initial=%s]"%(
-                initialGuess.shape, initialGuess))
+            print("... scipy.optimize minimizing (%s) on %s Wv,b free vars [initial=%s]"%(
+                minimAlgo, initialGuess.shape, initialGuess))
         return minimize(self.costhandler, initialGuess, method=minimAlgo)
 
     def buildRandomTrainer(setsize=2):
@@ -85,7 +85,7 @@ class TrainingSet:
     def printReport(self, optimalWeights, optimalBias, minimOK):
         weightsStr = floatsToStr(optimalWeights)
 
-        print("""%s set's cost was %0.05f; for minimization:
+        print("""RESULT: "%s" set's cost was %0.05f; for minimization:
             (optimal) weights = [%s]
             (optimal) bias    = %0.04f
             minimizer success : %s\n""" % (
