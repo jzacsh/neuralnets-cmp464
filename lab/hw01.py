@@ -8,20 +8,20 @@ from mpl_toolkits.mplot3d import Axes3D # needed for param plot='3d' below
 from scipy.optimize import minimize
 from matplotlib import pyplot
 
-def buildOutputLayer(inputs, weight, bias):
+def buildOutputLayer(inputs, weights, bias):
     """ computes the basic `w*x + b` output layer """
-    dotProd = np.dot(weight, inputs)
+    dotProd = np.dot(inputs, weights)
     return dotProd + bias
 
-def computeOutputLayerDistances(inputs, outputs, weight, bias):
+def computeOutputLayerDistances(inputs, outputs, weights, bias):
     """ computes the basic `w*x + b - y` result """
-    return buildOutputLayer(inputs, weight, bias) - outputs
+    return buildOutputLayer(inputs, weights, bias) - outputs
 
-def costsViaSquare(inputs, outputs, weight, bias):
-    return np.square(computeOutputLayerDistances(inputs, outputs, weight, bias))
+def costsViaSquare(inputs, outputs, weights, bias):
+    return np.square(computeOutputLayerDistances(inputs, outputs, weights, bias))
 
-def costsViaAbsVal(inputs, outputs, weight, bias):
-    return np.absolute(computeOutputLayerDistances(inputs, outputs, weight, bias))
+def costsViaAbsVal(inputs, outputs, weights, bias):
+    return np.absolute(computeOutputLayerDistances(inputs, outputs, weights, bias))
 
 class TrainingSet:
     def __init__(self, projectTitle, inputs, labels, debugMode=False):
@@ -39,9 +39,9 @@ class TrainingSet:
         """Handler for numpy's minimize() function"""
         return self.costof(weightAndBias[0], weightAndBias[1])
 
-    def costof(self, weight, bias):
+    def costof(self, weights, bias):
         """calculates cost using default methodology"""
-        return costsViaSquare(self.inputs, self.labels, weight, bias).sum()
+        return costsViaSquare(self.inputs, self.labels, weights, bias).sum()
 
     def randGuessMimizes(self):
         """returns "optimal" weight, bias, success (ie: whether vals are trustworthy)"""
@@ -58,6 +58,18 @@ class TrainingSet:
         return cleanMinim(res)
 
     def minimize(self, initialGuess, minimAlgo='Nelder-Mead'):
+        """
+        the dimension of initialGuess determines the number of free variables
+        the minimizer will search for
+
+        NOTE: initial guess should contain weights, and bias as the final value
+        """
+        # TODO(zacsh) determine why this works; how is initialGuess inspected
+        # internally??
+
+        if self.debugMode:
+            print("minimizing for a %s set of free variables [initial=%s]"%(
+                initialGuess.shape, initialGuess))
         return minimize(self.costhandler, initialGuess, method=minimAlgo)
 
     def buildRandomTrainer(setsize=2):
@@ -70,19 +82,28 @@ class TrainingSet:
         #print("y scalars, of shape: %s\n%s" % (labels.shape, labels))
         return TrainingSet(inputs, labels)
 
-    def printReport(self, optimalWeight, optimalBias, minimOK):
-        print("""%s set's cost was %0.05f
-        for minimization with: (optimal) weight=%0.04f, (optimal) bias=%0.04f
-        [minimize success: %s]""" % (
+    def printReport(self, optimalWeights, optimalBias, minimOK):
+        weightsStr = floatsToStr(optimalWeights)
+
+        print("""%s set's cost was %0.05f; for minimization:
+            (optimal) weights = [%s]
+            (optimal) bias    = %0.04f
+            minimizer success : %s\n""" % (
             self.projectName,
-            self.costof(optimalWeight, optimalBias),
-            optimalWeight, optimalBias,
+            self.costof(optimalWeights, optimalBias),
+            weightsStr, optimalBias,
             minimOK
         ))
 
-def cleanMinim(minimizerResult):
+def floatsToStr(flts):
+    def printFlt(flt): return "%0.02f" % flt
+    return ", ".join(map(printFlt, flts))
+
+def cleanMinim(minimizerResult, weightCount=1):
     """returns "optimal" weight, bias, success (ie: whether vals are trustworthy)"""
-    return [minimizerResult.x[0], minimizerResult.x[1], minimizerResult.success]
+    weightsAndBias = minimizerResult.x.tolist()[:weightCount+1]
+    weightsAndBias.append(minimizerResult.success)
+    return weightsAndBias
 
 def generateWeightBiasSpace(weight, bias):
     sampleFrom = -3
