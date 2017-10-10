@@ -8,12 +8,16 @@ from mpl_toolkits.mplot3d import Axes3D # needed for param plot='3d' below
 from scipy.optimize import minimize
 from matplotlib import pyplot
 
-def costsViaSquare(inputs, outputs, weight, bias):
+def buildOutputLayer(inputs, outputs, weight, bias):
+    """ computes the basic `w*x + b - y` result """
     dotProd = np.dot(weight, inputs)
-    return np.square(dotProd + bias - outputs)
+    return dotProd + bias - outputs
+
+def costsViaSquare(inputs, outputs, weight, bias):
+    return np.square(buildOutputLayer(inputs, outputs, weight, bias))
 
 def costsViaAbsVal(inputs, outputs, weight, bias):
-    return np.absolute(np.dot(weight, inputs) + bias - outputs)
+    return np.absolute(buildOutputLayer(inputs, outputs, weight, bias))
 
 class TrainingSet:
     def __init__(self, projectTitle, inputs, labels, debugMode=False):
