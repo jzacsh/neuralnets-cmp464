@@ -129,6 +129,7 @@ def generateWeightBiasSpace(weight, bias):
             np.arange(bias+sampleFrom,bias+sampleTo,sampleRate))
 
 def learnTruthTable(binaryOp, truthTableName):
+    print("\nLearning to produce: %s...\n" % (binaryOp))
     xorinputs = np.array([
         0, 0,
         0, 1,
