@@ -95,6 +95,18 @@ class TrainingSet:
             minimOK
         ))
 
+    def printManualLayers(self, weights, bias):
+        print("""X,\t\t"w*X",\t\t"w*X"+b,\tdistance,\texpected\n%s\n"""%("="*75))
+        for idx, inp in enumerate(self.inputs):
+            x, y = [inp, self.labels[idx]]
+            weighted = np.dot(x, weights)
+            print("%s,\t\t%0.02f,\t\t%0.02f,\t\t%0.02f,\t\t%s\n" %(
+                x,
+                weighted,
+                weighted+bias,
+                weighted+bias - y,
+                y))
+
 def floatsToStr(flts):
     def printFlt(flt): return "%0.02f" % flt
     return ", ".join(map(printFlt, flts))
@@ -132,6 +144,16 @@ def main():
     ])), 2)
 
     set.printReport([optimalWeight1, optimalWeight2], optimalBias, minimOK)
+    print("""\nmanually running reported optimal bias & weight: %0.05f
+    output layer distance from input layer:
+    """ % (
+        costsViaSquare(
+            set.inputs,
+            set.labels,
+            [optimalWeight1, optimalWeight2],
+            optimalBias).sum())
+    )
+    set.printManualLayers([optimalWeight1, optimalWeight2], optimalBias)
 
 if __name__ == '__main__':
     main()
