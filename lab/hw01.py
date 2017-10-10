@@ -78,7 +78,7 @@ def main():
             [0, 1],
             [1, 0],
             [1, 1])
-    xoroutputs = np.meshgrid([0, 1, 1, 0])
+    xoroutputs = np.meshgrid([0], [1], [1], [0])
     set = TrainingSet(xorinputs, xoroutputs, debugMode=True)
 # TODO(zacsh) figure out exactly what professor wants us to do with the xor
 # table...
