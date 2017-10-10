@@ -16,7 +16,8 @@ def costsViaAbsVal(inputs, outputs, weight, bias):
     return np.absolute(np.dot(weight, inputs) + bias - outputs)
 
 class TrainingSet:
-    def __init__(self, inputs, labels, debugMode=False):
+    def __init__(self, projectTitle, inputs, labels, debugMode=False):
+        self.projectName = projectTitle
         self.debugMode = debugMode
         self.inputs = np.array(inputs)
         self.labels = np.array(labels)
@@ -77,14 +78,13 @@ def generateWeightBiasSpace(weight, bias):
             np.arange(bias+sampleFrom,bias+sampleTo,sampleRate))
 
 def main():
-    projectName = "XOR Learning"
     xorinputs = np.meshgrid(
             [0, 0],
             [0, 1],
             [1, 0],
             [1, 1])
     xoroutputs = np.meshgrid([0], [1], [1], [0])
-    set = TrainingSet(xorinputs, xoroutputs, debugMode=True)
+    set = TrainingSet("XOR Learning", xorinputs, xoroutputs, debugMode=True)
 # TODO(zacsh) figure out exactly what professor wants us to do with the xor
 # table...
 #   optimalWeight, optimalBias, minimOK = set.minimize(np.array([1, 1]))
@@ -92,7 +92,7 @@ def main():
     print("""%s set's cost was %0.05f
     for minimization with: (optimal) weight=%0.04f, (optimal) bias=%0.04f
     [minimize success: %s]""" % (
-        projectName,
+        "XOR Learning",
         set.costof(optimalWeight, optimalBias),
         optimalWeight, optimalBias,
         minimOK
