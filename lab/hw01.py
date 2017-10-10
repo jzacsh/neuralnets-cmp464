@@ -136,12 +136,12 @@ def learnTruthTable(binaryOp, truthTableName):
         1, 1
     ]).reshape(4,2)
     xoroutputs = np.array(binaryOp).reshape(4,1)
-    set = TrainingSet(truthTableName + " Truth Table", xorinputs, xoroutputs, debugMode=True)
-    optimalWeight1, optimalWeight2, optimalBias, minimOK = cleanMinim(set.minimize(np.array([
-        1,
-        1,
-        1 # bias
-    ])), 2)
+    set = TrainingSet(
+            truthTableName + " Truth Table",
+            xorinputs,
+            xoroutputs, debugMode=True)
+    optimalWeight1, optimalWeight2, optimalBias, minimOK = cleanMinim(
+            set.minimize(np.array([1, 1, 1])), 2)
 
     set.printReport([optimalWeight1, optimalWeight2], optimalBias, minimOK)
     print("""\nmanually running reported optimal bias & weight: %0.05f
