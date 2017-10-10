@@ -125,11 +125,13 @@ def main():
     ]).reshape(4,2)
     xoroutputs = np.array([0, 1, 1, 0]).reshape(4,1)
     set = TrainingSet("XOR Learning", xorinputs, xoroutputs, debugMode=True)
-# TODO(zacsh) figure out exactly what professor wants us to do with the xor
-# table...
-    optimalWeight, optimalBias, minimOK = cleanMinim(set.minimize(np.array([1, 1])))
+    optimalWeight1, optimalWeight2, optimalBias, minimOK = cleanMinim(set.minimize(np.array([
+        1,
+        1,
+        1 # bias
+    ])), 2)
 
-    set.printReport(optimalWeight, optimalBias, minimOK)
+    set.printReport([optimalWeight1, optimalWeight2], optimalBias, minimOK)
 
 if __name__ == '__main__':
     main()
