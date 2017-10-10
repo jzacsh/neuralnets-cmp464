@@ -144,15 +144,12 @@ def learnTruthTable(binaryOp, truthTableName):
             set.minimize(np.array([1, 1, 1])), 2)
 
     set.printReport([optimalWeight1, optimalWeight2], optimalBias, minimOK)
-    print("""\nmanually running reported optimal bias & weight: %0.05f
-    output layer distance from input layer:
-    """ % (
-        costsViaSquare(
-            set.inputs,
-            set.labels,
-            [optimalWeight1, optimalWeight2],
-            optimalBias).sum())
-    )
+    print("""Manually running said bias & weights, with cost = %0.05f (via sum-of-squares)
+    """ % (costsViaSquare(
+        set.inputs,
+        set.labels,
+        [optimalWeight1, optimalWeight2],
+        optimalBias).sum()))
     set.printManualLayers([optimalWeight1, optimalWeight2], optimalBias)
 
 def main():
