@@ -1,0 +1,15 @@
+= lab 2017-10-10, before professor arrives
+:pythonFile: http://comet.lehman.cuny.edu/schneider/Fall17/CMP464/classNotes/labOct10.py
+
+.instructions
+----
+ I have created a lab for you to finish (while you wait-- remember that you can
+ collaborate but must tell me with whom)your assignment to try to learn OR,AND
+ and XOR using matrix methods and cost functions. 
+ Please read the annotated program( read the comments) below that takes you
+ almost to the finish of your assignment. Try to finish the assignment and then
+ answer questions that I have put in the comments. 
+----
+
+instructions included link to {pythonFile}["annotated program as a python
+file"], which is now in ./labOct10.py
