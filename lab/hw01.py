@@ -104,7 +104,7 @@ class TrainingSet:
                 x,
                 weighted,
                 weighted+bias,
-                weighted+bias - y,
+                np.square(weighted+bias - y),
                 y))
 
 def floatsToStr(flts):
