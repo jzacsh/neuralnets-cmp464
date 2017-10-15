@@ -29,6 +29,7 @@ class TrainingSet:
         self.debugMode = debugMode
         self.inputs = np.array(inputs)
         self.labels = np.array(labels)
+        self.weightCount = self.inputs.shape[1] if self.inputs.shape[1] else 1
 
         if self.debugMode:
             print("constructing trainer given %dx%x inputs, %dx%d expected output matrices" % (
@@ -55,7 +56,7 @@ class TrainingSet:
                 print("\tminimized: %s\t[init guess #%d: %s]" %(res.x, i, ithGuess))
 
         # whatever the last mimizer returned
-        return cleanMinim(res)
+        return cleanMinim(res, self.weightCount)
 
     def minimize(self, initialGuess, minimAlgo='Nelder-Mead'):
         """
@@ -113,9 +114,10 @@ def floatsToStr(flts):
 
 def cleanMinim(minimizerResult, weightCount=1):
     """returns "optimal" weight, bias, success (ie: whether vals are trustworthy)"""
-    weightsAndBias = minimizerResult.x.tolist()[:weightCount+1]
-    weightsAndBias.append(minimizerResult.success)
-    return weightsAndBias
+    results = minimizerResult.x.tolist()
+    weights = results[:weightCount]
+    bias = results[weightCount]
+    return [weights, bias, minimizerResult.success]
 
 def generateWeightBiasSpace(weight, bias):
     sampleFrom = -3
@@ -141,17 +143,17 @@ def learnTruthTable(binaryOp, truthTableName):
             truthTableName + " Truth Table",
             xorinputs,
             xoroutputs, debugMode=True)
-    optimalWeight1, optimalWeight2, optimalBias, minimOK = cleanMinim(
-            set.minimize(np.array([1, 1, 1])), 2)
+    optimalWeights, optimalBias, minimOK = cleanMinim(
+            set.minimize(np.array([1, 1, 1])), set.weightCount)
 
-    set.printReport([optimalWeight1, optimalWeight2], optimalBias, minimOK)
+    set.printReport(optimalWeights, optimalBias, minimOK)
     print("""Manually running said bias & weights, with cost = %0.05f (via sum-of-squares)
     """ % (costsViaSquare(
         set.inputs,
         set.labels,
-        [optimalWeight1, optimalWeight2],
+        optimalWeights,
         optimalBias).sum()))
-    set.printManualLayers([optimalWeight1, optimalWeight2], optimalBias)
+    set.printManualLayers(optimalWeights, optimalBias)
 
 def main():
     learnTruthTable([0, 1, 1, 0], "XOR")
