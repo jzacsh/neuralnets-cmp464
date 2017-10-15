@@ -47,7 +47,9 @@ class TrainingSet:
     def randGuessMimizes(self):
         """returns "optimal" weight, bias, success (ie: whether vals are trustworthy)"""
         if self.debugMode:
-            print("randomly guessing & minimizing.... Knowns are\n\tx: %s\n\ty: %s" %(self.inputs, self.labels))
+            print(
+                "random guessing & minimizing.... Knowns are\n\tx: %s\n\ty: %s"
+                %(self.inputs, self.labels))
 
         for i in range(0, 5):
             ithGuess = np.random.randn(2) # two guesses: one for weight, one for bias
