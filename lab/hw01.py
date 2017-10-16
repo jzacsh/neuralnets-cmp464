@@ -109,11 +109,13 @@ class TrainingSet:
         for idx, inp in enumerate(self.inputs):
             x, y = [inp, self.labels[idx]]
             weighted = np.dot(x, weights)
+            wxPlusB = weighted+bias
+            distance = np.square(wxPlusB - y)
             print("%s,\t\t%0.02f,\t\t%0.02f,\t\t%0.02f,\t\t%s\n" %(
                 x,
                 weighted,
-                weighted+bias,
-                np.square(weighted+bias - y),
+                wxPlusB,
+                distance,
                 y))
 
 def floatsToStr(flts):
