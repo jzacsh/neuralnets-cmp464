@@ -104,19 +104,20 @@ class TrainingSet:
             minimOK
         ))
 
-    def printManualLayers(self, weights, bias):
-        print("""X,\t\t"w*X",\t\t"w*X"+b,\tdistance,\texpected\n%s\n"""%("="*75))
+    def printManualLayers(self, weights, bias, resultCaster):
+        print("""X,\t\t"w*X",\t\t"w*X"+b,\tdistance,\texpected,\tanswer\n%s\n"""%("="*79))
         for idx, inp in enumerate(self.inputs):
             x, y = [inp, self.labels[idx]]
             weighted = np.dot(x, weights)
             wxPlusB = weighted+bias
             distance = np.square(wxPlusB - y)
-            print("%s,\t\t%0.02f,\t\t%0.02f,\t\t%0.02f,\t\t%s\n" %(
+            print("%s,\t\t%0.02f,\t\t%0.02f,\t\t%0.02f,\t\t%s\t\t%0.1d\n" %(
                 x,
                 weighted,
                 wxPlusB,
                 distance,
-                y))
+                y,
+                resultCaster(wxPlusB)))
 
 def floatsToStr(flts):
     def printFlt(flt): return "%0.02f" % flt
@@ -140,7 +141,7 @@ def generateWeightBiasSpace(weight, bias):
             np.arange(weight+sampleFrom,weight+sampleTo,sampleRate),
             np.arange(bias+sampleFrom,bias+sampleTo,sampleRate))
 
-def learnTruthTable(binaryOp, truthTableName):
+def learnTruthTable(binaryOp, truthTableName, resultCaster):
     print("\nLearning to produce: %s...\n" % (binaryOp))
     xorinputs = np.array([
         0, 0,
@@ -163,12 +164,12 @@ def learnTruthTable(binaryOp, truthTableName):
         set.labels,
         optimalWeights,
         optimalBias).sum()))
-    set.printManualLayers(optimalWeights, optimalBias)
+    set.printManualLayers(optimalWeights, optimalBias, resultCaster)
 
 def main():
-    learnTruthTable([0, 1, 1, 0], "XOR")
-    learnTruthTable([0, 1, 1, 1], "OR")
-    learnTruthTable([0, 0, 0, 1], "AND")
+    learnTruthTable([0, 1, 1, 0], "XOR", lambda wxPlusB: round(wxPlusB))
+    learnTruthTable([0, 1, 1, 1], "OR", lambda wxPlusB:  round(wxPlusB))
+    learnTruthTable([0, 0, 0, 1], "AND", lambda wxPlusB: round(wxPlusB))
 
 if __name__ == '__main__':
     main()
