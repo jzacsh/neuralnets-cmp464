@@ -73,9 +73,6 @@ class TrainingSet:
 
         NOTE: initial guess should contain weights, and bias as the final value
         """
-        # TODO(zacsh) determine why this works; how is initialGuess inspected
-        # internally??
-
         if self.debugMode:
             print("... scipy.optimize minimizing (%s) on %s Wv,b free vars [initial=%s]"%(
                 minimAlgo, initialGuess.shape, initialGuess))
