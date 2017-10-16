@@ -165,7 +165,7 @@ def learnTruthTable(binaryOp, truthTableName, resultCaster):
 
 def main():
     learnTruthTable([0, 1, 1, 0], "XOR", lambda wxPlusB: round(wxPlusB))
-    learnTruthTable([0, 1, 1, 1], "OR", lambda wxPlusB:  round(wxPlusB))
+    learnTruthTable([0, 1, 1, 1], "OR",  lambda wxPlusB: round(wxPlusB))
     learnTruthTable([0, 0, 0, 1], "AND", lambda wxPlusB: round(wxPlusB))
 
 if __name__ == '__main__':
