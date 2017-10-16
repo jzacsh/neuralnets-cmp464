@@ -36,9 +36,15 @@ class TrainingSet:
                 self.inputs.shape[0], self.inputs.shape[1],
                 self.labels.shape[0], self.labels.shape[1]))
 
-    def costhandler(self, weightAndBias):
+    def costhandler(self, weightsAndBias):
         """Handler for numpy's minimize() function"""
-        return self.costof(weightAndBias[0], weightAndBias[1])
+        wbli = weightsAndBias.tolist()
+        weights = np.array(wbli[:self.weightCount]).reshape(self.weightCount, 1)
+        bias = wbli[self.weightCount]
+        if self.debugMode:
+            print("[dbg] ...minimizing... weights=[%0.02f, %0.02f], bias=%0.03f"%(
+                weights[0, 0], weights[1, 0], bias))
+        return self.costof(weights, bias)
 
     def costof(self, weights, bias):
         """calculates cost using default methodology"""
