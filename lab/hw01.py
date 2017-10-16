@@ -150,7 +150,7 @@ def learnTruthTable(binaryOp, truthTableName):
     set = TrainingSet(
             truthTableName + " Truth Table",
             xorinputs,
-            xoroutputs, debugMode=True)
+            xoroutputs, debugMode=False)
     optimalWeights, optimalBias, minimOK = cleanMinim(
             set.minimize(np.array([1, 1, 1])), set.weightCount)
 
