@@ -26,13 +26,13 @@ def costsViaAbsVal(inputs, outputs, weights, bias):
 def logisticSigmoid(x):
     return 1/(1+np.exp(-x))
 
-def crossEntropyParts(Ys, sigmoidOutputs):
-    oneMinus = (1-Ys)*np.log(1 - sigmoidOutputs)
-    yTimes = Ys*np.log(sigmoidOutputs)
-    return np.sum(-1 * oneMinus) + np.sum(-1 * yTimes)
+def crossEntropyParts(Ys, probabilities):
+    oneMinus = (1-Ys)*np.log(1 - probabilities)
+    yTimes =   (  Ys)*np.log(    probabilities)
+    return -1*(np.sum(oneMinus) + np.sum(yTimes))
 
 def costsViaCrossEntropy(inputs, outputs, weights, bias):
-    layerOut = computeOutputLayerDistances(inputs, outputs, weights, bias)
+    layerOut = buildOutputLayer(inputs, weights, bias)
     return crossEntropyParts(outputs, logisticSigmoid(layerOut))
 
 class TrainingSet:
@@ -60,7 +60,7 @@ class TrainingSet:
 
     def costof(self, weights, bias):
         """calculates cost using default methodology"""
-        return costsViaCrossEntropy(self.inputs, self.labels, weights, bias).sum()
+        return costsViaCrossEntropy(self.inputs, self.labels, weights, bias)
 
     def randGuessMimizes(self):
         """returns "optimal" weight, bias, success (ie: whether vals are trustworthy)"""
@@ -114,19 +114,21 @@ class TrainingSet:
         ))
 
     def printManualLayers(self, weights, bias, resultCaster):
-        print("""X,\t\t"w*X",\t\t"w*X"+b,\tdistance,\texpected,\tanswer\n%s\n"""%("="*79))
+        print("""    X,      "w*X",     "w*X"+b,   probability,        cost, expected, answer\n%s\n"""%("="*79))
         for idx, inp in enumerate(self.inputs):
             x, y = [inp, self.labels[idx]]
             weighted = np.dot(x, weights)
             wxPlusB = weighted+bias
-            cost = crossEntropyParts(y, logisticSigmoid(wxPlusB - y))
-            print("%s,\t\t%0.02f,\t\t%0.02f,\t\t%0.02f,\t\t%s\t\t%0.1d\n" %(
+            probability = logisticSigmoid(wxPlusB)
+            cost = crossEntropyParts(y, probability)
+            print("%5s,  %6.6f,  %6.6f,  %02.10f, %02.10f, %8s,  %0.1d\n" %(
                 x,
-                weighted,
-                wxPlusB,
-                cost,
-                y,
-                resultCaster(wxPlusB)))
+                weighted,    # w*x
+                wxPlusB,     # w*x+b
+                probability, # sigmoid(w*x+b)
+                cost,        # cost(w*x+b) that influenced minimization
+                y,           # expected
+                resultCaster(probability)))
 
 def floatsToStr(flts):
     def printFlt(flt): return "%0.02f" % flt
@@ -167,21 +169,18 @@ def learnTruthTable(binaryOp, truthTableName, resultCaster):
             set.minimize(np.array([1, 1, 1])), set.weightCount)
 
     set.printReport(optimalWeights, optimalBias, minimOK)
-    print("""Manually running said bias & weights, with cost = %0.05f (via sum-of-squares)
+    print("""Manually running said bias & weights, with cost = %0.05f (via cross-entropy fn)
     """ % (costsViaCrossEntropy(
         set.inputs,
         set.labels,
         optimalWeights,
-        optimalBias).sum()))
+        optimalBias)))
     set.printManualLayers(optimalWeights, optimalBias, resultCaster)
 
-def positive(val):
-    return 0 if val < 0 else 1
-
 def main():
-    learnTruthTable([0, 1, 1, 0], "XOR", lambda wxPlusB: positive(wxPlusB))
-    learnTruthTable([0, 1, 1, 1], "OR",  lambda wxPlusB: positive(wxPlusB))
-    learnTruthTable([0, 0, 0, 1], "AND", lambda wxPlusB: positive(wxPlusB))
+    learnTruthTable([0, 1, 1, 0], "XOR", lambda wxPlusB: round(wxPlusB))
+    learnTruthTable([0, 1, 1, 1], "OR",  lambda wxPlusB: round(wxPlusB))
+    learnTruthTable([0, 0, 0, 1], "AND", lambda wxPlusB: round(wxPlusB))
 
 if __name__ == '__main__':
     main()
