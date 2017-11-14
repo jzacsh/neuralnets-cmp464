@@ -10,6 +10,6 @@ test: $(UNIT_TT)
 labs: $(LAB_PYS)
 
 $(LAB_PYS) $(UNIT_TT):
-	python3 $@
+	@python3 $@
 
 .PHONY: current labs $(LAB_PYS) $(UNIT_TT)
