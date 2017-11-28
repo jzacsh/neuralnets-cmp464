@@ -16,9 +16,14 @@ from sklearn.linear_model import LogisticRegression
 from urllib.request import urlretrieve
 import pickle
 
+import tempfile
+
 url = 'https://commondatastorage.googleapis.com/books1000/'
 last_percent_reported = None
-data_root = '/Users/bob/Documents/TensorFlow/Data/' # Change me to store data elsewhere
+
+data_root = tempfile.mkdtemp(prefix="athoughj-data")
+print("NOTE: storing everything in\n\t%s\n" %(data_root))
+
 
 def download_progress_hook(count, blockSize, totalSize):
   """A hook to report the progress of a download. This is mostly intended for users with
