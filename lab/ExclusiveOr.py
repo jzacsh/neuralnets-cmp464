@@ -20,9 +20,13 @@ inps= np.array([0,0,0,1,1,0,1,1])
 inps= np.reshape(inps,(N,feats))
 inps=inps.astype(np.float32)
 print("original inputs \n",inps)
- #we will multiply on the right in tensorflow
+
+#we will multiply on the right in tensorflow
 #outps= np.array([0,1,1,0]) #exclusive or
-outps= np.array([0,1,1,1])#and,or but not exclusive or work; This is what I called outps
+
+#and,or but not exclusive or work; This is what I called outps
+outps= np.array([0,1,1,1])
+
 print("original outps \n",outps)
 print("shape of array \n",outps.shape)
 #outps=np.reshape(outps,(4,1))
@@ -39,35 +43,51 @@ training_steps = 1000
 #===============================================================================
 # Declare  symbolic variables
 
-w = tf.Variable(tf.truncated_normal([feats, 1]),name='weights')# default tf.float32
+# note: default tf.float32
+w = tf.Variable(tf.truncated_normal([feats, 1]),name='weights')
 b = tf.Variable(0, dtype=tf.float32,name="biases")
-    
-  
-x = tf.placeholder(dtype=tf.float32,shape=(N,feats),name='x')#all the inputs note are four of them 
 
-y=  tf.placeholder(dtype=tf.float32,shape=(N,1),name='y') # the corresponding correct answers
+
+# all the inputs note are four of them
+x = tf.placeholder(dtype=tf.float32,shape=(N,feats),name='x')
+
+# the corresponding correct answers
+y =  tf.placeholder(dtype=tf.float32,shape=(N,1),name='y')
 
 
 
 
 
 # Construct expression graph
-p_1 = 1 / (1 + tf.exp(-tf.matmul(x, w) - b))   # Probability that target = 1;   4 by 1 matrix each "row" a probability
-prediction = p_1 > 0.5                    # The prediction thresholded
-xent = -y * tf.log(p_1) - (1-y) * tf.log(1-p_1) # Cross-entropy loss function; Manipulation of maximum likelihood taking logs and negative sign 
-#to minimize result; 
-#-- note when I didnt make the y (N,1) totally screwed up per usual gave 4X4 for entropy
+############################
 
-cost = tf.reduce_mean(xent) + 0.01 * tf.reduce_mean(tf.square(w))# The cost to minimize with an L2 regularization
- 
+# Probability that target = 1;   4 by 1 matrix each "row" a probability
+p_1 = 1 / (1 + tf.exp(-tf.matmul(x, w) - b))
+
+prediction = p_1 > 0.5 # The prediction thresholded
+
+# Cross-entropy loss function; Manipulation of maximum likelihood taking logs
+# and negative sign
+xent = -y * tf.log(p_1) - (1-y) * tf.log(1-p_1)
+
+#to minimize result;
+
+#note when I didnt make the y (N,1) totally screwed up per usual gave 4X4 for
+#entropy
+
+# The cost to minimize with an L2 regularization
+cost = tf.reduce_mean(xent) + 0.01 * tf.reduce_mean(tf.square(w))
+
 #optimizer = tf.train.GradientDescentOptimizer(0.1).minimize(cost)
 
 derivW= tf.gradients(cost,w,name='derivW')
-derivb= tf.gradients(cost,b,name='derivb')     # Compute the gradient of the cost
-    
+derivb= tf.gradients(cost,b,name='derivb') # Compute the gradient of the cost
 
- 
-newW=w-.1*derivW[0] #I needed reduce sum before but here they both should be vectors unless I have to take deivW[0] or something
+
+#I needed reduce sum before but here they both should be vectors unless I have
+#to take deivW[0] or something
+newW=w-.1*derivW[0]
+
 trainw=tf.assign(w,newW)
 newb=b-.1*derivb[0]
 trainb=tf.assign(b,newb)
@@ -88,12 +108,14 @@ sess.run(init) # reset values to wrong
 for i in range(training_steps):
     feed_dict= {x:inps, y:outps}
     #_, ww,bb,p1,xentropy = sess.run([optimizer, w, b,p_1,xent],feed_dict=feed_dict)
-    bb,ww,dw,db,tw,tb=sess.run([b,w,derivW,derivb,trainw,trainb],feed_dict=feed_dict )# want trainw and trainb so that the assign is run
-    
-        #print("\n\n new w b \n",ww," \n\n ",bb)
-        #print("\n\n output ",p1,"shape ",p1.shape)
-        #print("\n\n entropy",xentropy)
-        #print("\n\n\n new dw db \n",dw," \n \n",db)
+
+    # want trainw and trainb so that the assign is run
+    bb,ww,dw,db,tw,tb=sess.run([b,w,derivW,derivb,trainw,trainb],feed_dict=feed_dict)
+
+    #print("\n\n new w b \n",ww," \n\n ",bb)
+    #print("\n\n output ",p1,"shape ",p1.shape)
+    #print("\n\n entropy",xentropy)
+    #print("\n\n\n new dw db \n",dw," \n \n",db)
 
 
 print("\n\n\n\n\n Final model:  b values \n\n")
@@ -108,10 +130,14 @@ print("correct answers when zero from training ")
 print(pred.astype(int)-outps)
 
 """ Homework
-
-1. change using a minimizing of L2 difference. This is normal regression. What logical expressions can you learn.
+1. change using a minimizing of L2 difference. This is normal regression. What
+   logical expressions can you learn.
 2. See if regularization makes any difference
-3.  Add a couple of random digits to the input for XOR of first two digits.  See if you can fit this situation with 4 test samples.
-Can you test to see if it generalizes.What if you have more than 4 test samples? (Look at my Theano/XORRandomExtraDimensions.py)
-4. Can you look at derivatives to tell when you are close to a min and stop the routine
+3.  Add a couple of random digits to the input for XOR of first two digits.  See
+    if you can fit this situation with 4 test samples.
+
+    Can you test to see if it generalizes.What if you have more than 4 test
+    samples? (Look at my Theano/XORRandomExtraDimensions.py)
+4. Can you look at derivatives to tell when you are close to a min and stop the
+   routine
 """
