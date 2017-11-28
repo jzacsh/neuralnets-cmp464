@@ -29,14 +29,15 @@ print(c)
 print(d)
 
 def sigmoidAB(mA, mB, label):
-    return tf.sigmoid(tf.matmul(mA, mB), label)
+    sigLabel = "sigmoid-%s" % (label)
+    return tf.sigmoid(tf.matmul(mA, mB, name=label), name=sigLabel)
 
-AB = sigmoidAB(a, b, "sigmoid-AxB")
-ABC = sigmoidAB(AB, c, "sigmoid-ABxC")
-ABCD = sigmoidAB(ABC, d, "sigmoid-ABCxD")
+AB = sigmoidAB(a, b, "AxB")
+ABC = sigmoidAB(AB, c, "sig-AB-xC")
+ABCD = sigmoidAB(ABC, d, "sig-ABC-xD")
 sigAll = tf.sigmoid(ABCD, "sigmoid-ABCD")
 
-log_dir=tempfile.mkdtemp(prefix="hw3nov14")
+log_dir = tempfile.mkdtemp(prefix="hw3-nov14-partii")
 print(log_dir)
 with tf.Session() as sess:
     writer = tf.summary.FileWriter(log_dir, sess.graph)
