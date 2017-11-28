@@ -4,6 +4,9 @@ import sys
 import tensorflow as tf
 import tempfile
 
+os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
+# not really doing intersting things in this lab, so just ignore optimization
+
 log_dir=tempfile.mkdtemp(prefix="tfhelloworld")
 
 counter = 3
