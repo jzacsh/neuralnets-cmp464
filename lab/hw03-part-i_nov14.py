@@ -14,13 +14,15 @@ os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
 
 class Differentiable:
     """ encapsulation of a function and its derivative """
-    def __init__(self, f, d):
+    def __init__(self, label, f, d):
         self.func = f
         self.deriv = d
+        self.func.name = label
+        self.deriv.name = "%sDeriv" % label
 
 # g(x) = x^4+2x-7 ; per matlab example
 # g'(x) = 4x^3+2
-fExFourth = Differentiable(
+fExFourth = Differentiable("fExFourth",
         lambda x: tf.add_n([tf.pow(x, 4), tf.multiply(2, x), -7]),
         lambda x: tf.add_n([tf.multiply(4, tf.pow(x, 3)), 2]))
 
