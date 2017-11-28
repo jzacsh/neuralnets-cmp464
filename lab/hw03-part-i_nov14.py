@@ -24,12 +24,15 @@ fExFourth = Differentiable(
         lambda x: tf.add_n([tf.pow(x, 4), tf.multiply(2, x), -7]),
         lambda x: tf.add_n([tf.multiply(4, tf.pow(x, 3)), 2]))
 
+tFofTwo = fExFourth.func(2)
+tFofDerivTwo = fExFourth.deriv(2)
+
 log_dir = tempfile.mkdtemp(prefix="hw3-nov14-parti")
 print(log_dir)
 with tf.Session() as sess:
     writer = tf.summary.FileWriter(log_dir, sess.graph)
 
-    fOfTwo, fDerivOfTwo = sess.run([fExFourth.func(2), fExFourth.deriv(2)])
+    fOfTwo, fDerivOfTwo = results = sess.run([tFofTwo, tFofDerivTwo])
     sys.stderr.write("results:\n\tf(2)=%s\n\tf'(2)=%s\n" % (fOfTwo, fDerivOfTwo))
 
     # note: only needed when doing a *loop* of sess.run() calls, and want to see
