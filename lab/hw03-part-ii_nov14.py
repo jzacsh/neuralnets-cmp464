@@ -1,5 +1,5 @@
 """
-Jonathan Zacsh's solution to homework #3, Nov 14.
+Jonathan Zacsh's solution to homework #3, Nov 14., Part II
 """
 # copy/pasta fork of
 # http://comet.lehman.cuny.edu/schneider/Fall17/CMP464/DemoPrograms/Beginner1A.py
