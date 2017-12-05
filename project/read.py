@@ -64,6 +64,6 @@ dataSets = Datas.fromPicklePath(sys.argv[1])
 for i in range(15,21):
     print(dataSets.training.labels[i])
 dataSets.toHotEncoding()
-print("REFORMATED data to ONE HOT encoding;\n%s\n" % dataSets)
+print("REFORMATED data to ONE HOT encoding;\n%s\n" % dataSets.string())
 for i in range(15,21):
     print(dataSets.training.labels[i,:])
