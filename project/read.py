@@ -19,7 +19,7 @@ with open(pklpath, 'rb') as f:
     del save  # hint to help gc free up memory
 
 def statsStr(data, labels):
-    return "%d data points, %d labels" % (len(data), len(labels))
+    return "%d labels, %d data points in a %s" % (len(labels), len(data), data.shape)
 
 print("done loading pickle file;\n\t[taining] %s\n\t[testing] %s\n\t[valids ] %s\n" % (
     statsStr(train_dataset, train_labels),
