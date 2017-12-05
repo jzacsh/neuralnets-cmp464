@@ -17,6 +17,7 @@ with open(pklpath, 'rb') as f:
     test_dataset = save['test_dataset']
     test_labels = save['test_labels']
     del save  # hint to help gc free up memory
+    f.close()
 
 def statsStr(data, labels):
     return "%d labels, %d data points in a %s" % (len(labels), len(data), data.shape)
