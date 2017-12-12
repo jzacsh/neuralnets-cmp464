@@ -14,6 +14,8 @@ NUM_STEPS = 3001 # number of training steps to walk through
 
 REGULARIZER_EPSILON = 0.01
 
+DEBUG_DATA_PARSING = True
+
 ###############################################################################
 # important constants: don't touch! ###########################################
 
@@ -105,14 +107,14 @@ dataSets = Datas.fromPicklePath(PICKLE_FILE)
 if BATCH_SIZE > dataSets.training.length:
     raise
 
-for i in range(15,21):
-    print(dataSets.training.labels[i])
+if DEBUG_DATA_PARSING:
+    for i in range(15,21): print(dataSets.training.labels[i])
 
 dataSets.toHotEncoding()
 print("REFORMATED data to ONE HOT encoding;\n%s\n" % dataSets.string())
-for i in range(15,21):
-    print(dataSets.training.labels[i,:])
 
+if DEBUG_DATA_PARSING:
+    for i in range(15,21): print(dataSets.training.labels[i,:])
 
 # end of CLI logic ##################################
 
