@@ -10,9 +10,17 @@ import tensorflow as tf
 # global settings #############################################################
 BATCH_SIZE = 128 # the N for the minibatches
 
+NUM_STEPS = 3001 # number of training steps to walk through
+
+REGULARIZER_EPSILON = 0.01
+
+###############################################################################
 # important constants: don't touch! ###########################################
 
 NUM_LETTERS = 10 # size of the set of letters we're recognizing: |{a...j}|
+
+PICKLE_FILE = sys.argv[1]
+LOG_DIR = sys.argv[2]
 
 ###############################################################################
 os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
@@ -28,9 +36,16 @@ class LabledDatas:
     def __init__(self, data, labels):
         self.data = data
         self.labels = labels
+        self.length = self.data.shape[0]
         self.img_sqr_dim = self.data.shape[1]
         if len(self.data) != len(self.labels):
             raise
+
+    def cutBatch(self, step):
+        offset = (step * BATCH_SIZE) % (self.length - BATCH_SIZE)
+        batchedData = self.data[offset:(offset + BATCH_SIZE), :]
+        batchedLabels = self.labels[offset:(offset + BATCH_SIZE), :]
+        return batchedData, batchedLabels
 
     def string(self):
         return "%d labels, %d data points in a %s" % (
@@ -83,7 +98,10 @@ class Datas:
         self.valid.toHotEncoding()
         self.testing.toHotEncoding()
 
-dataSets = Datas.fromPicklePath(sys.argv[1])
+
+# actual CLI logic starts here ######################
+
+dataSets = Datas.fromPicklePath(PICKLE_FILE)
 for i in range(15,21):
     print(dataSets.training.labels[i])
 dataSets.toHotEncoding()
@@ -93,6 +111,8 @@ for i in range(15,21):
 
 if BATCH_SIZE > dataSets.training.length:
     raise
+
+# end of CLI logic ##################################
 
 tfgraph = tf.Graph()
 with tfgraph.as_default():
@@ -114,9 +134,15 @@ with tfgraph.as_default():
 
     # Training computation.
     tf_wxb = tf.matmul(tf_train_dataset, tf_weights) + tf_biases
-    tf_loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(
-        labels=tf_train_labels, logits=tf_wxb)) # "logits" = "unscaled log probabilities"
 
+    # we separately define regularizers to make it clear where to add future
+    # layers' weight matrices
+    regularizers = tf.nn.l2_loss(tf_weights)
+
+    tf_loss = tf.reduce_mean(
+            tf.reduce_mean( # "logits" = "unscaled log probabilities"
+                tf.nn.softmax_cross_entropy_with_logits(labels=tf_train_labels, logits=tf_wxb))
+            + REGULARIZER_EPSILON * regularizers)
     # Optimizer.
     tf_optimizer = tf.train.GradientDescentOptimizer(0.5).minimize(tf_loss)
 
@@ -127,6 +153,41 @@ with tfgraph.as_default():
     tf_valid_prediction = tf.nn.softmax(tf.matmul(tf_valid_dataset, tf_weights) + tf_biases)
     tf_test_prediction = tf.nn.softmax(tf.matmul(tf_test_dataset, tf_weights) + tf_biases)
 
-with tf.Session(graph=tfgraph) as session:
+
+#############################################################
+# actual training starts here ###############################
+
+def printBatchDebug(step, cost, predic, labels):
+    def debugAccuracyOf(predictions, labels):
+        # predictions will be one hot encoded too and seeing if agree where 1 is
+        isHighestProbabilityOnCorrectLetter = np.argmax(predictions, 1) == np.argmax(labels, 1)
+        return (100.0 * np.sum(isHighestProbabilityOnCorrectLetter) / predictions.shape[0])
+    pAcc = debugAccuracyOf(predic, labels)
+    vAcc = debugAccuracyOf(tf_valid_prediction.eval(), dataSets.valid.labels)
+
+    DEBUG_FMT_DOC = """\tminibatch #%d stats:
+\t\t      loss: %2.10f
+\t\t  accuracy: %2.3f%%
+\t\tvalidation: %2.3f%%
+"""
+    sys.stderr.write(DEBUG_FMT_DOC % (step, cost, pAcc, vAcc))
+
+with tf.Session(graph=tfgraph) as sess:
+    writer = tf.summary.FileWriter(LOG_DIR, sess.graph)
     tf.global_variables_initializer().run()
-    # TODO fill in missing block of code here
+    sys.stderr.write("initialized & starting training...\n")
+    for step in range(NUM_STEPS):
+        data, labels = dataSets.training.cutBatch(step)
+
+        batchMapping = {tf_train_dataset: data, tf_train_labels: labels} # tensorflow-ism
+        _, batchCost, batchPredictions = sess.run([  # run our actual computation
+            tf_optimizer, tf_loss, tf_train_prediction
+        ], feed_dict=batchMapping)
+
+        if (step % 500 == 0): printBatchDebug(step, batchCost, batchPredictions, labels)
+
+        #writer.add_summary(batchCost, step)
+        #writer.add_summary(batchPredictions, step)
+        writer.flush()
+
+    writer.close()
