@@ -5,11 +5,13 @@ import sys
 import pickle
 import numpy as np
 import os
+import tensorflow as tf
 
 # global settings #############################################################
 BATCH_SIZE = 128 # the N for the minibatches
 
 # important constants: don't touch! ###########################################
+
 NUM_LETTERS = 10 # size of the set of letters we're recognizing: |{a...j}|
 
 ###############################################################################
@@ -88,3 +90,40 @@ dataSets.toHotEncoding()
 print("REFORMATED data to ONE HOT encoding;\n%s\n" % dataSets.string())
 for i in range(15,21):
     print(dataSets.training.labels[i,:])
+
+tfgraph = tf.Graph()
+with tfgraph.as_default():
+    # Input data.
+    tf_train_dataset = tf.placeholder(
+            tf.float32, shape=(BATCH_SIZE, dataSets.img_sqr_dim * dataSets.img_sqr_dim)) #the input data
+    # For the training data, we use a placeholder that will be fed at run time
+    # with a training minibatch.
+    tf_train_labels = tf.placeholder(tf.float32, shape=(BATCH_SIZE, NUM_LETTERS))
+    tf_valid_dataset = tf.constant(dataSets.valid.data)
+    tf_test_dataset = tf.constant(dataSets.testing.data)
+
+    # Variables.
+    tf_weights = tf.Variable(tf.truncated_normal([
+        dataSets.img_sqr_dim * dataSets.img_sqr_dim, # the number of features
+        NUM_LETTERS
+    ]))
+    tf_biases = tf.Variable(tf.zeros([NUM_LETTERS]))
+
+    # Training computation.
+    tf_wxb = tf.matmul(tf_train_dataset, tf_weights) + tf_biases
+    tf_loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(
+        labels=tf_train_labels, logits=tf_wxb)) # "logits" = "unscaled log probabilities"
+
+    # Optimizer.
+    tf_optimizer = tf.train.GradientDescentOptimizer(0.5).minimize(tf_loss)
+
+    # Predictions for the training, validation, and test data.
+
+    # softmax: compute Pr(...) via outputs w/sigmoid & normalizing
+    tf_train_prediction = tf.nn.softmax(tf_wxb)
+    tf_valid_prediction = tf.nn.softmax(tf.matmul(tf_valid_dataset, tf_weights) + tf_biases)
+    tf_test_prediction = tf.nn.softmax(tf.matmul(tf_test_dataset, tf_weights) + tf_biases)
+
+with tf.Session(graph=tfgraph) as session:
+    tf.global_variables_initializer().run()
+    # TODO fill in missing block of code here
