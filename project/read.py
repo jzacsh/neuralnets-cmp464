@@ -91,6 +91,9 @@ print("REFORMATED data to ONE HOT encoding;\n%s\n" % dataSets.string())
 for i in range(15,21):
     print(dataSets.training.labels[i,:])
 
+if BATCH_SIZE > dataSets.training.length:
+    raise
+
 tfgraph = tf.Graph()
 with tfgraph.as_default():
     # Input data.
