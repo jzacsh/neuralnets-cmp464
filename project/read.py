@@ -4,10 +4,13 @@ demonstrating we can load and intepret pickle files
 import sys
 import pickle
 import numpy as np
+import os
 
 # global settings #############################################################
 batch_size = 128 # the N for the minibatches
 ###############################################################################
+os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
+# not really doing intersting things in this project, so just ignore optimization
 
 # TODO: fix to at least assert these are sane values
 image_size = 28
