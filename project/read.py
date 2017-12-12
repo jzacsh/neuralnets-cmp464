@@ -1,5 +1,5 @@
 """
-demonstrating we can load and intepret pickle files
+Learn to recognize thumbnails of hand written characters "A" through "J"
 """
 import sys
 import pickle
