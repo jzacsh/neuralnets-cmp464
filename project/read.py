@@ -7,10 +7,10 @@ import numpy as np
 import os
 
 # global settings #############################################################
-batch_size = 128 # the N for the minibatches
+BATCH_SIZE = 128 # the N for the minibatches
 
 # important constants: don't touch! ###########################################
-num_letters = 10 # size of the set of letters we're recognizing: |{a...j}|
+NUM_LETTERS = 10 # size of the set of letters we're recognizing: |{a...j}|
 
 ###############################################################################
 os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
@@ -40,7 +40,7 @@ class LabledDatas:
         self.data = self.data.reshape(oneHotDim).astype(np.float32)
 
         # to make ONE HOT ENCODING; the None adds a dimension and tricky numpy broadcasting
-        self.labels = (np.arange(num_letters) == self.labels[:,None]).astype(np.float32)
+        self.labels = (np.arange(NUM_LETTERS) == self.labels[:,None]).astype(np.float32)
 
 class Datas:
     """
