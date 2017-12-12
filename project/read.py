@@ -8,41 +8,59 @@ import os
 
 # global settings #############################################################
 batch_size = 128 # the N for the minibatches
+
+# important constants: don't touch! ###########################################
+num_letters = 10 # size of the set of letters we're recognizing: |{a...j}|
+
 ###############################################################################
 os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
 # not really doing intersting things in this project, so just ignore optimization
 
-# TODO: fix to at least assert these are sane values
-image_size = 28
-num_labels = 10
-oneHotDim = (-1, image_size * image_size) # "-1": don't touch first dimension
+class LabledDatas:
+    """
+    LabeledDatas describes a two-tuple of numpy.ndarrays (tensors): a dataset
+    and its labels.
 
-class DataLabel:
+    Some self-mutating convenience utility is embedded, eg: toHotEncoding()
+    """
     def __init__(self, data, labels):
         self.data = data
         self.labels = labels
+        self.img_sqr_dim = self.data.shape[1]
+        if len(self.data) != len(self.labels):
+            raise
 
-    def toString(self):
+    def string(self):
         return "%d labels, %d data points in a %s" % (
                 len(self.labels), len(self.data), self.data.shape)
 
     def toHotEncoding(self):
+        oneHotDim = (-1, self.img_sqr_dim * self.img_sqr_dim) # "-1" means don't touch first dimension
         # takes the Array to 2 dimensional array NoDataXNofeatures
         self.data = self.data.reshape(oneHotDim).astype(np.float32)
 
         # to make ONE HOT ENCODING; the None adds a dimension and tricky numpy broadcasting
-        self.labels = (np.arange(num_labels) == self.labels[:,None]).astype(np.float32)
+        self.labels = (np.arange(num_letters) == self.labels[:,None]).astype(np.float32)
 
 class Datas:
+    """
+    Datas describes three sets of data, each as LabeledDatas:
+    - training set
+    - validation set
+    - final testing set
+
+    Some self-mutating convenience utility is embedded, eg: toHotEncoding()
+    """
     def __init__(self, training, valid, testing):
         self.training = training
         self.valid = valid
         self.testing = testing
+        self.img_sqr_dim = self.training.img_sqr_dim
 
     def string(self):
         return "\t[training] %s\n\t[ testing] %s\n\t[ valids ] %s" % (
-            self.training.toString(), self.testing.toString(),
-            self.valid.toString())
+            self.training.string(), self.testing.string(),
+            self.valid.string())
 
     @staticmethod
     def fromPicklePath(pklpath):
@@ -50,9 +68,9 @@ class Datas:
         with open(pklpath, 'rb') as f:
             pkdt = pickle.load(f)
             d = Datas(
-                    DataLabel(pkdt['train_dataset'], pkdt['train_labels']),
-                    DataLabel(pkdt['valid_dataset'], pkdt['valid_labels']),
-                    DataLabel(pkdt['test_dataset'], pkdt['test_labels']))
+                    LabledDatas(pkdt['train_dataset'], pkdt['train_labels']),
+                    LabledDatas(pkdt['valid_dataset'], pkdt['valid_labels']),
+                    LabledDatas(pkdt['test_dataset'], pkdt['test_labels']))
             del pkdt  # hint to help gc free up memory
             f.close()
         print("done loading pickle file;\n%s\n" % (d.string()))
