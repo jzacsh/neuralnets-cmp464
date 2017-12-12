@@ -14,7 +14,7 @@ NUM_STEPS = 3001 # number of training steps to walk through
 
 REGULARIZER_EPSILON = 0.01
 
-DEBUG_DATA_PARSING = True
+DEBUG_DATA_PARSING = False
 
 ###############################################################################
 # important constants: don't touch! ###########################################
