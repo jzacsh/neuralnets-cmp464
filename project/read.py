@@ -118,30 +118,61 @@ if DEBUG_DATA_PARSING:
 
 # end of CLI logic ##################################
 
+class Layer:
+    def __init__(self, fromNodes, toNodes):
+        self.w = tf.Variable(tf.truncated_normal([fromNodes, toNodes]))
+        self.b = tf.Variable(tf.zeros([toNodes]))
+
+class LayeredCake:
+    """
+    Encapsulates layers of a neural, preserving order, and providing access to
+    start and end layers. Each layer is represented as a collection of
+    TensorFlow data structures.
+    """
+
+    def __init__(self, num_feats, num_outs, num_hidden=0):
+        """
+        @num_feats number of feature-nodes the first layer should have.
+          That is: for a given input (eg: a single image for an OCR network),
+          how many distinct features are being evaluated (eg: number of pixels
+          in said image).
+
+        @num_outs number of output-nodes the final layer should have.
+
+        @num_hidden number of hidden-layers to generate.
+        """
+        self.feats = num_feats
+        self.outs = num_outs
+        self.hidden = num_hidden
+
+        if num_hidden == 0:
+            self.layers = [Layer(self.feats, self.outs)]
+        else:
+            raise NotImplementedError("have not implemented hidden layers yet")
+
+
 tfgraph = tf.Graph()
 with tfgraph.as_default():
+    num_features = dataSets.img_sqr_dim * dataSets.img_sqr_dim
+    num_outputs = NUM_LETTERS
+
     # Input data.
     tf_train_dataset = tf.placeholder(
-            tf.float32, shape=(BATCH_SIZE, dataSets.img_sqr_dim * dataSets.img_sqr_dim)) #the input data
+            tf.float32, shape=(BATCH_SIZE, num_features)) #the input data
     # For the training data, we use a placeholder that will be fed at run time
     # with a training minibatch.
     tf_train_labels = tf.placeholder(tf.float32, shape=(BATCH_SIZE, NUM_LETTERS))
     tf_valid_dataset = tf.constant(dataSets.valid.data)
     tf_test_dataset = tf.constant(dataSets.testing.data)
 
-    # Variables.
-    tf_weights = tf.Variable(tf.truncated_normal([
-        dataSets.img_sqr_dim * dataSets.img_sqr_dim, # the number of features
-        NUM_LETTERS
-    ]))
-    tf_biases = tf.Variable(tf.zeros([NUM_LETTERS]))
+    cake = LayeredCake(num_features, num_outputs)
 
     # Training computation.
-    tf_wxb = tf.matmul(tf_train_dataset, tf_weights) + tf_biases
+    tf_wxb = tf.matmul(tf_train_dataset, cake.layers[0].w) + cake.layers[0].b
 
     # we separately define regularizers to make it clear where to add future
     # layers' weight matrices
-    regularizers = tf.nn.l2_loss(tf_weights)
+    regularizers = tf.nn.l2_loss(cake.layers[0].w)
 
     tf_loss = tf.reduce_mean(
             tf.reduce_mean( # "logits" = "unscaled log probabilities"
@@ -154,8 +185,8 @@ with tfgraph.as_default():
 
     # softmax: compute Pr(...) via outputs w/sigmoid & normalizing
     tf_train_prediction = tf.nn.softmax(tf_wxb)
-    tf_valid_prediction = tf.nn.softmax(tf.matmul(tf_valid_dataset, tf_weights) + tf_biases)
-    tf_test_prediction = tf.nn.softmax(tf.matmul(tf_test_dataset, tf_weights) + tf_biases)
+    tf_valid_prediction = tf.nn.softmax(tf.matmul(tf_valid_dataset, cake.layers[0].w) + cake.layers[0].b)
+    tf_test_prediction = tf.nn.softmax(tf.matmul(tf_test_dataset, cake.layers[0].w) + cake.layers[0].b)
 
 
 #############################################################
