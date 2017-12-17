@@ -124,6 +124,10 @@ class Layer:
         self.w = tf.Variable(tf.truncated_normal([fromNodes, toNodes]))
         self.b = tf.Variable(tf.zeros([toNodes]))
 
+    def wxb(self, data):
+        """ Computes `w*x + b` on some data set, data. """
+        return tf.matmul(data, self.w) + self.b
+
 class LayeredCake:
     """
     Encapsulates layers of a neural, preserving order, and providing access to
@@ -169,7 +173,7 @@ with tfgraph.as_default():
     cake = LayeredCake(num_features, num_outputs)
 
     # Training computation.
-    tf_wxb = tf.matmul(tf_train_dataset, cake.layers[0].w) + cake.layers[0].b
+    tf_wxb = cake.layers[0].wxb(tf_train_dataset)
 
     # we separately define regularizers to make it clear where to add future
     # layers' weight matrices
@@ -186,8 +190,8 @@ with tfgraph.as_default():
 
     # softmax: compute Pr(...) via outputs w/sigmoid & normalizing
     tf_train_prediction = tf.nn.softmax(tf_wxb)
-    tf_valid_prediction = tf.nn.softmax(tf.matmul(tf_valid_dataset, cake.layers[0].w) + cake.layers[0].b)
-    tf_test_prediction = tf.nn.softmax(tf.matmul(tf_test_dataset, cake.layers[0].w) + cake.layers[0].b)
+    tf_valid_prediction = cake.layers[0].wxb(tf_valid_dataset)
+    tf_test_prediction  = cake.layers[0].wxb(tf_test_dataset)
 
 
 #############################################################
