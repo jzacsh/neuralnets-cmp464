@@ -24,9 +24,10 @@ NUM_LETTERS = 10 # size of the set of letters we're recognizing: |{a...j}|
 PICKLE_FILE = sys.argv[1]
 LOG_DIR = sys.argv[2]
 
-###############################################################################
 os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
 # not really doing intersting things in this project, so just ignore optimization
+
+###############################################################################
 
 class LabledDatas:
     """
