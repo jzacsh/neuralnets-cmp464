@@ -6,6 +6,7 @@ import pickle
 import numpy as np
 import os
 import tensorflow as tf
+import math
 
 # global settings #############################################################
 BATCH_SIZE = 128 # the N for the minibatches
@@ -153,8 +154,16 @@ class LayeredCake:
 
         if num_hidden == 0:
             self.layers = [Layer(self.feats, self.outs)]
+        elif num_hidden == 1:
+            # TODO(zacsh) finish experimenting here, and remove this in favor of
+            # arbitrary num_hidden with a simple loop (and remove the exception
+            # below)
+            self.layers = [
+                Layer(self.feats, math.ceil(self.feats/2)),
+                Layer(math.ceil(self.feats/2), self.outs)
+            ]
         else:
-            raise NotImplementedError("have not implemented hidden layers yet")
+            raise NotImplementedError("have not implemented arbitrary hidden layers yet")
 
         self.outputs = self.layers[-1]
 
