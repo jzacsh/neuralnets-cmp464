@@ -208,13 +208,13 @@ with tfgraph.as_default():
 #############################################################
 # actual training starts here ###############################
 
-def printBatchDebug(step, cost, predic, labels, validationPredic):
+def printBatchDebug(step, cost, predic, labels):
     def debugAccuracyOf(predictions, labels):
         # predictions will be one hot encoded too and seeing if agree where 1 is
         isHighestProbabilityOnCorrectLetter = np.argmax(predictions, 1) == np.argmax(labels, 1)
         return (100.0 * np.sum(isHighestProbabilityOnCorrectLetter) / predictions.shape[0])
     pAcc = debugAccuracyOf(predic, labels)
-    vAcc = debugAccuracyOf(validationPredic, dataSets.valid.labels)
+    vAcc = debugAccuracyOf(tf_valid_prediction.eval(), dataSets.valid.labels)
 
     DEBUG_FMT_DOC = """\tminibatch #%d stats:
 \t\t      loss: %2.10f
@@ -231,12 +231,12 @@ with tf.Session(graph=tfgraph) as sess:
         data, labels = dataSets.training.cutBatch(step)
 
         batchMapping = {tf_train_dataset: data, tf_train_labels: labels} # tensorflow-ism
-        _, batchCost, batchPredictions, validPredict = sess.run([  # run our actual computation
-            tf_optimizer, tf_loss, tf_train_prediction, tf_valid_prediction
+        _, batchCost, batchPredictions = sess.run([  # run our actual computation
+            tf_optimizer, tf_loss, tf_train_prediction
         ], feed_dict=batchMapping)
 
         if (step % 500 == 0):
-            printBatchDebug(step, batchCost, batchPredictions, labels, validPredict)
+            printBatchDebug(step, batchCost, batchPredictions, labels)
 
         #writer.add_summary(batchCost, step)
         #writer.add_summary(batchPredictions, step)
