@@ -189,7 +189,7 @@ with tfgraph.as_default():
     cake = LayeredCake(num_features, num_outputs)
 
     # Training computation.
-    tf_wxb = cake.outputs.wxb(tf_train_dataset)
+    tf_wxb = cake.outputs.wxb(tf_train_dataset, "actual")
 
     tf_loss = tf.reduce_mean(
             tf.reduce_mean( # "logits" = "unscaled log probabilities"
@@ -201,8 +201,8 @@ with tfgraph.as_default():
 
     # softmax: compute Pr(...) via outputs w/sigmoid & normalizing
     tf_train_prediction = tf.nn.softmax(tf_wxb)
-    tf_valid_prediction = cake.outputs.wxb(tf_valid_dataset)
-    tf_test_prediction  = cake.outputs.wxb(tf_test_dataset)
+    tf_valid_prediction = cake.outputs.wxb(tf_valid_dataset, "valid")
+    tf_test_prediction  = cake.outputs.wxb(tf_test_dataset, "test")
 
 
 #############################################################
