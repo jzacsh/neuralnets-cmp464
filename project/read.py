@@ -13,6 +13,9 @@ BATCH_SIZE = 128 # the N for the minibatches
 
 NUM_STEPS = 3001 # number of training steps to walk through
 
+DEBUG_RATE_INVERSE = 5
+# Max (minus 1) number of training steps to debug-print
+
 REGULARIZER_EPSILON = 0.01
 
 DEBUG_DATA_PARSING = False
@@ -24,6 +27,8 @@ NUM_LETTERS = 10 # size of the set of letters we're recognizing: |{a...j}|
 
 PICKLE_FILE = sys.argv[1]
 LOG_DIR = sys.argv[2]
+
+DEBUG_RATE_MOD = int(NUM_STEPS / DEBUG_RATE_INVERSE)
 
 os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
 # not really doing intersting things in this project, so just ignore optimization
@@ -228,7 +233,7 @@ with tf.Session(graph=tfgraph) as sess:
     tf.global_variables_initializer().run()
     sys.stderr.write(
             "initialized & starting %d-step training [debugging every %d steps]...\n"
-            % (NUM_STEPS, 500))
+            % (NUM_STEPS, DEBUG_RATE_MOD))
     for step in range(NUM_STEPS):
         data, labels = dataSets.training.cutBatch(step)
 
@@ -237,11 +242,13 @@ with tf.Session(graph=tfgraph) as sess:
             tf_optimizer, tf_loss, tf_train_prediction
         ], feed_dict=batchMapping)
 
-        if (step % 500 == 0):
+        if (step % DEBUG_RATE_MOD) == 0:
             printBatchDebug(step, batchCost, batchPredictions, labels)
 
         #writer.add_summary(batchCost, step)
         #writer.add_summary(batchPredictions, step)
         writer.flush()
 
+    sys.stderr.write("TRAINING COMPLETE; last step was:\n")
+    printBatchDebug(step, batchCost, batchPredictions, labels)
     writer.close()
