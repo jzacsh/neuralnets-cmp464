@@ -124,9 +124,10 @@ class Layer:
         self.w = tf.Variable(tf.truncated_normal([fromNodes, toNodes]))
         self.b = tf.Variable(tf.zeros([toNodes]))
 
-    def wxb(self, data):
+
+    def wxb(self, data, label):
         """ Computes `w*x + b` on some data set, data. """
-        return tf.matmul(data, self.w) + self.b
+        return tf.add(tf.matmul(data, self.w), self.b, name=label)
 
 class LayeredCake:
     """
