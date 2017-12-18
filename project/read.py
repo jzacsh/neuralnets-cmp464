@@ -127,8 +127,13 @@ if DEBUG_DATA_PARSING:
 
 class Layer:
     def __init__(self, fromNodes, toNodes):
-        self.w = tf.Variable(tf.truncated_normal([fromNodes, toNodes]))
-        self.b = tf.Variable(tf.zeros([toNodes]))
+        self.dimFrom = fromNodes
+        self.dimTo = toNodes
+        self.w = tf.Variable(tf.truncated_normal([self.dimFrom, self.dimTo]))
+        self.b = tf.Variable(tf.zeros([self.dimTo]))
+
+    def to_string(self):
+        return "(%-2d x %-2d)" % (self.dimFrom, self.dimTo)
 
 
     def wxb(self, data, label):
@@ -172,6 +177,8 @@ class LayeredCake:
 
         self.outputs = self.layers[-1]
 
+    def to_string(self):
+        return " -> ".join([lyr.to_string() for lyr in self.layers])
 
     def regularizers(self, epsilon):
         return epsilon * tf.add_n([tf.nn.l2_loss(lyr.w) for lyr in self.layers])
@@ -192,6 +199,10 @@ with tfgraph.as_default():
     tf_test_dataset = tf.constant(dataSets.testing.data)
 
     cake = LayeredCake(num_features, num_outputs)
+
+    sys.stderr.write(
+            "Setup: %d hidden layers to train from %d features to %d outputs, as such:\n\t%s\n"
+            % (cake.hidden, num_features, num_outputs, cake.to_string()))
 
     # Training computation.
     tf_wxb = cake.outputs.wxb(tf_train_dataset, "actual")
