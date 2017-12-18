@@ -156,6 +156,10 @@ class LayeredCake:
             raise NotImplementedError("have not implemented hidden layers yet")
 
 
+    def regularizers(self, epsilon):
+        return epsilon * tf.add_n([tf.nn.l2_loss(lyr.w) for lyr in self.layers])
+
+
 tfgraph = tf.Graph()
 with tfgraph.as_default():
     num_features = dataSets.img_sqr_dim * dataSets.img_sqr_dim
@@ -175,14 +179,10 @@ with tfgraph.as_default():
     # Training computation.
     tf_wxb = cake.layers[0].wxb(tf_train_dataset)
 
-    # we separately define regularizers to make it clear where to add future
-    # layers' weight matrices
-    regularizers = tf.nn.l2_loss(cake.layers[0].w)
-
     tf_loss = tf.reduce_mean(
             tf.reduce_mean( # "logits" = "unscaled log probabilities"
                 tf.nn.softmax_cross_entropy_with_logits(labels=tf_train_labels, logits=tf_wxb))
-            + REGULARIZER_EPSILON * regularizers)
+            + cake.regularizers(REGULARIZER_EPSILON))
     # Optimizer.
     tf_optimizer = tf.train.GradientDescentOptimizer(0.5).minimize(tf_loss)
 
