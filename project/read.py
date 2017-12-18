@@ -226,7 +226,9 @@ def printBatchDebug(step, cost, predic, labels):
 with tf.Session(graph=tfgraph) as sess:
     writer = tf.summary.FileWriter(LOG_DIR, sess.graph)
     tf.global_variables_initializer().run()
-    sys.stderr.write("initialized & starting training...\n")
+    sys.stderr.write(
+            "initialized & starting %d-step training [debugging every %d steps]...\n"
+            % (NUM_STEPS, 500))
     for step in range(NUM_STEPS):
         data, labels = dataSets.training.cutBatch(step)
 
