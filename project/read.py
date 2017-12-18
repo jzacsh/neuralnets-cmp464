@@ -180,6 +180,25 @@ class LayeredCake:
     def to_string(self):
         return " -> ".join([lyr.to_string() for lyr in self.layers])
 
+    def feed_forward(self, tf_inputs, feedName):
+        """
+        returns what's usually called the 'unscaled log probabilities'
+        (logits) of layers' wx+b chains (ie: we don't actually run softmax, we
+        leave that for the caller of this function).
+        """
+        lastWxB = tf_inputs
+        for i, layer in enumerate(self.layers):
+            lastWxB = layer.wxb(lastWxB, "%slayer-%02d"%(feedName, i))
+        return lastWxB
+
+    def buildLossGraph(self, outLayer, weightBeta):
+        # scale with sigmoid
+        log_probs = tf.nn.softmax_cross_entropy_with_logits(
+                labels=tf_train_labels,
+                # "logits" = "unscaled log probabilities"
+                logits=outLayer)
+        return tf.reduce_mean(tf.reduce_mean(log_probs) + self.regularizers(weightBeta))
+
     def regularizers(self, epsilon):
         return epsilon * tf.add_n([tf.nn.l2_loss(lyr.w) for lyr in self.layers])
 
@@ -199,26 +218,25 @@ with tfgraph.as_default():
     tf_test_dataset = tf.constant(dataSets.testing.data)
 
     cake = LayeredCake(num_features, num_outputs)
+    # TODO(zacsh) add on:                       , num_hidden=1)
 
     sys.stderr.write(
             "Setup: %d hidden layers to train from %d features to %d outputs, as such:\n\t%s\n"
             % (cake.hidden, num_features, num_outputs, cake.to_string()))
 
     # Training computation.
-    tf_wxb = cake.outputs.wxb(tf_train_dataset, "actual")
-
-    tf_loss = tf.reduce_mean(
-            tf.reduce_mean( # "logits" = "unscaled log probabilities"
-                tf.nn.softmax_cross_entropy_with_logits(labels=tf_train_labels, logits=tf_wxb))
-            + cake.regularizers(REGULARIZER_EPSILON))
+    tf_outLayer = cake.feed_forward(tf_train_dataset, "actual")
+    tf_loss = cake.buildLossGraph(tf_outLayer, REGULARIZER_EPSILON)
     tf_optimizer = tf.train.GradientDescentOptimizer(0.5).minimize(tf_loss)
 
     # Predictions for the training, validation, and test data.
 
     # softmax: compute Pr(...) via outputs w/sigmoid & normalizing
-    tf_train_prediction = tf.nn.softmax(tf_wxb)
-    tf_valid_prediction = cake.outputs.wxb(tf_valid_dataset, "valid")
-    tf_test_prediction  = cake.outputs.wxb(tf_test_dataset, "test")
+    tf_train_prediction = tf.nn.softmax(tf_outLayer)
+
+    # identical to "actual" but we don't compute loss or an optimizer
+    tf_valid_prediction = tf.nn.softmax(cake.feed_forward(tf_valid_dataset, "valid"))
+    tf_test_prediction  = tf.nn.softmax(cake.feed_forward(tf_test_dataset, "test"))
 
 
 #############################################################
