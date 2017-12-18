@@ -185,7 +185,6 @@ with tfgraph.as_default():
             tf.reduce_mean( # "logits" = "unscaled log probabilities"
                 tf.nn.softmax_cross_entropy_with_logits(labels=tf_train_labels, logits=tf_wxb))
             + cake.regularizers(REGULARIZER_EPSILON))
-    # Optimizer.
     tf_optimizer = tf.train.GradientDescentOptimizer(0.5).minimize(tf_loss)
 
     # Predictions for the training, validation, and test data.
