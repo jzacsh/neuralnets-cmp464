@@ -155,6 +155,8 @@ class LayeredCake:
         else:
             raise NotImplementedError("have not implemented hidden layers yet")
 
+        self.outputs = self.layers[-1]
+
 
     def regularizers(self, epsilon):
         return epsilon * tf.add_n([tf.nn.l2_loss(lyr.w) for lyr in self.layers])
@@ -177,7 +179,7 @@ with tfgraph.as_default():
     cake = LayeredCake(num_features, num_outputs)
 
     # Training computation.
-    tf_wxb = cake.layers[0].wxb(tf_train_dataset)
+    tf_wxb = cake.outputs.wxb(tf_train_dataset)
 
     tf_loss = tf.reduce_mean(
             tf.reduce_mean( # "logits" = "unscaled log probabilities"
@@ -190,8 +192,8 @@ with tfgraph.as_default():
 
     # softmax: compute Pr(...) via outputs w/sigmoid & normalizing
     tf_train_prediction = tf.nn.softmax(tf_wxb)
-    tf_valid_prediction = cake.layers[0].wxb(tf_valid_dataset)
-    tf_test_prediction  = cake.layers[0].wxb(tf_test_dataset)
+    tf_valid_prediction = cake.outputs.wxb(tf_valid_dataset)
+    tf_test_prediction  = cake.outputs.wxb(tf_test_dataset)
 
 
 #############################################################
