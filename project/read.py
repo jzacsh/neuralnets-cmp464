@@ -90,7 +90,6 @@ class Datas:
 
     @staticmethod
     def fromPicklePath(pklpath):
-        print("loading pickle file: %s\n" % pklpath)
         with open(pklpath, 'rb') as f:
             pkdt = pickle.load(f)
             d = Datas(
@@ -99,7 +98,6 @@ class Datas:
                     LabledDatas(pkdt['test_dataset'], pkdt['test_labels']))
             del pkdt  # hint to help gc free up memory
             f.close()
-        print("done loading pickle file;\n%s\n" % (d.string()))
         return d
 
     def toHotEncoding(self):
@@ -110,18 +108,20 @@ class Datas:
 
 # actual CLI logic starts here ######################
 
+sys.stderr.write("Loading pickle file: %s\n" % PICKLE_FILE)
 dataSets = Datas.fromPicklePath(PICKLE_FILE)
 if BATCH_SIZE > dataSets.training.length:
     raise
+sys.stderr.write("Done loading pickle file;\n%s\n" % (dataSets.string()))
 
 if DEBUG_DATA_PARSING:
-    for i in range(15,21): print(dataSets.training.labels[i])
+    for i in range(15,21): sys.stderr.write(dataSets.training.labels[i])
 
 dataSets.toHotEncoding()
-print("REFORMATED data to ONE HOT encoding;\n%s\n" % dataSets.string())
+sys.stderr.write("Reformated data to ONE HOT encoding;\n%s\n" % dataSets.string())
 
 if DEBUG_DATA_PARSING:
-    for i in range(15,21): print(dataSets.training.labels[i,:])
+    for i in range(15,21): sys.stderr.write(dataSets.training.labels[i,:])
 
 # end of CLI logic ##################################
 
@@ -232,7 +232,7 @@ with tf.Session(graph=tfgraph) as sess:
     writer = tf.summary.FileWriter(LOG_DIR, sess.graph)
     tf.global_variables_initializer().run()
     sys.stderr.write(
-            "initialized & starting %d-step training [debugging every %d steps]...\n"
+            "Initialized & starting %d-step training [debugging every %d steps]...\n"
             % (NUM_STEPS, DEBUG_RATE_MOD))
     for step in range(NUM_STEPS):
         data, labels = dataSets.training.cutBatch(step)
