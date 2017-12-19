@@ -1,5 +1,7 @@
 """
-Learn to recognize thumbnails of hand written characters "A" through "J"
+Debugging-rewrite of read.py's arbitrary-hidden-layer handling internals.
+Manually writing everything to distinguish between overall logical bug and
+implementation bug.
 """
 import sys
 import pickle
@@ -11,7 +13,7 @@ import math
 # global settings #############################################################
 BATCH_SIZE = 128 # the N for the minibatches
 
-NUM_STEPS = 3001 # number of training steps to walk through
+NUM_STEPS = 9001 # number of training steps to walk through
 
 DEBUG_RATE_INVERSE = 5
 # Max (minus 1) number of training steps to debug-print
@@ -125,69 +127,11 @@ if DEBUG_DATA_PARSING:
 
 # end of CLI logic ##################################
 
-class Layer:
-    def __init__(self, fromNodes, toNodes):
-        self.dimFrom = fromNodes
-        self.dimTo = toNodes
-        self.w = tf.Variable(tf.truncated_normal([self.dimFrom, self.dimTo]))
-        self.b = tf.Variable(tf.zeros([self.dimTo]))
-
-    def to_string(self):
-        return "(%-2d x %-2d)" % (self.dimFrom, self.dimTo)
-
-
-    def wxb(self, data, label):
-        """ Computes `w*x + b` on some data set, data. """
-        return tf.add(tf.matmul(data, self.w), self.b, name=label)
-
-class LayeredCake:
-    """
-    Encapsulates layers of a neural, preserving order, and providing access to
-    start and end layers. Each layer is represented as a collection of
-    TensorFlow data structures.
-    """
-
-    def __init__(self, num_feats, num_outs, num_hidden=0):
-        """
-        @num_feats number of feature-nodes the first layer should have.
-          That is: for a given input (eg: a single image for an OCR network),
-          how many distinct features are being evaluated (eg: number of pixels
-          in said image).
-
-        @num_outs number of output-nodes the final layer should have.
-
-        @num_hidden number of hidden-layers to generate.
-        """
-        self.feats = num_feats
-        self.outs = num_outs
-        self.hidden = num_hidden
-
-        if num_hidden == 0:
-            self.layers = [Layer(self.feats, self.outs)]
-        elif num_hidden == 1:
-            # TODO(zacsh) finish experimenting here, and remove this in favor of
-            # arbitrary num_hidden with a simple loop (and remove the exception
-            # below)
-            self.layers = [
-                Layer(self.feats, math.ceil(self.feats/2)),
-                Layer(math.ceil(self.feats/2), self.outs)
-            ]
-        else:
-            raise NotImplementedError("have not implemented arbitrary hidden layers yet")
-
-        self.outputs = self.layers[-1]
-
-    def to_string(self):
-        return " -> ".join([lyr.to_string() for lyr in self.layers])
-
-    def regularizers(self, epsilon):
-        return epsilon * tf.add_n([tf.nn.l2_loss(lyr.w) for lyr in self.layers])
-
-
 tfgraph = tf.Graph()
 with tfgraph.as_default():
     num_features = dataSets.img_sqr_dim * dataSets.img_sqr_dim
     num_outputs = NUM_LETTERS
+    num_hidden = 1
 
     # Input data.
     tf_train_dataset = tf.placeholder(
@@ -198,27 +142,50 @@ with tfgraph.as_default():
     tf_valid_dataset = tf.constant(dataSets.valid.data)
     tf_test_dataset = tf.constant(dataSets.testing.data)
 
-    cake = LayeredCake(num_features, num_outputs)
+    test_weight_1 = tf.Variable(tf.truncated_normal([num_features, 400]))
+    test_bias_1   = tf.Variable(tf.zeros([400]))
+    test_weight_2 = tf.Variable(tf.truncated_normal([400, num_outputs]))
+    test_bias_2   = tf.Variable(tf.zeros([num_outputs]))
 
     sys.stderr.write(
-            "Setup: %d hidden layers to train from %d features to %d outputs, as such:\n\t%s\n"
-            % (cake.hidden, num_features, num_outputs, cake.to_string()))
+            "Setup: %d hidden layers to train from %d features to %d outputs\n"
+            % (num_hidden, num_features, num_outputs))
+
+    hidden_1 = tf.add(tf.matmul(tf_train_dataset, test_weight_1), test_bias_1, name="training-inputs")
 
     # Training computation.
-    tf_wxb = cake.outputs.wxb(tf_train_dataset, "actual")
+    tf_wxb = tf.add(tf.matmul(hidden_1, test_weight_2), test_bias_2, name="training-hidden")
+
+    regularizers = REGULARIZER_EPSILON * tf.add_n([
+        tf.nn.l2_loss(test_weight_1),
+        tf.nn.l2_loss(test_weight_2),
+    ])
 
     tf_loss = tf.reduce_mean(
             tf.reduce_mean( # "logits" = "unscaled log probabilities"
                 tf.nn.softmax_cross_entropy_with_logits(labels=tf_train_labels, logits=tf_wxb))
-            + cake.regularizers(REGULARIZER_EPSILON))
+            + regularizers)
     tf_optimizer = tf.train.GradientDescentOptimizer(0.5).minimize(tf_loss)
 
     # Predictions for the training, validation, and test data.
 
     # softmax: compute Pr(...) via outputs w/sigmoid & normalizing
     tf_train_prediction = tf.nn.softmax(tf_wxb)
-    tf_valid_prediction = cake.outputs.wxb(tf_valid_dataset, "valid")
-    tf_test_prediction  = cake.outputs.wxb(tf_test_dataset, "test")
+
+    valid_weight_1 = tf.Variable(tf.truncated_normal([num_features, 400]))
+    valid_bias_1   = tf.Variable(tf.zeros([400]))
+    valid_weight_2 = tf.Variable(tf.truncated_normal([400, num_outputs]))
+    valid_bias_2   = tf.Variable(tf.zeros([num_outputs]))
+    valid_hidden_1 = tf.add(tf.matmul(tf_valid_dataset, valid_weight_1), valid_bias_1, name="valid-inputs")
+
+    test_weight_1 = tf.Variable(tf.truncated_normal([num_features, 400]))
+    test_bias_1   = tf.Variable(tf.zeros([400]))
+    test_weight_2 = tf.Variable(tf.truncated_normal([400, num_outputs]))
+    test_bias_2   = tf.Variable(tf.zeros([num_outputs]))
+    test_hidden_1 = tf.add(tf.matmul(tf_test_dataset, test_weight_1), test_bias_1, name="valid-inputs")
+
+    tf_valid_prediction = tf.add(tf.matmul(valid_hidden_1, valid_weight_2), valid_bias_2, name="valid")
+    tf_test_prediction  = tf.add(tf.matmul(test_hidden_1,   test_weight_2), test_bias_2, name="test")
 
 
 #############################################################
