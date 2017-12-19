@@ -142,9 +142,9 @@ with tfgraph.as_default():
     tf_valid_dataset = tf.constant(dataSets.valid.data)
     tf_test_dataset = tf.constant(dataSets.testing.data)
 
-    train_weight_1 = tf.Variable(tf.truncated_normal([num_features, 400]))
-    train_bias_1   = tf.Variable(tf.zeros([400]))
-    train_weight_2 = tf.Variable(tf.truncated_normal([400, num_outputs]))
+    train_weight_1 = tf.Variable(tf.truncated_normal([num_features, 20]))
+    train_bias_1   = tf.Variable(tf.zeros([20]))
+    train_weight_2 = tf.Variable(tf.truncated_normal([20, num_outputs]))
     train_bias_2   = tf.Variable(tf.zeros([num_outputs]))
 
     sys.stderr.write(
@@ -165,7 +165,7 @@ with tfgraph.as_default():
             tf.reduce_mean( # "logits" = "unscaled log probabilities"
                 tf.nn.softmax_cross_entropy_with_logits(labels=tf_train_labels, logits=tf_wxb))
             + regularizers)
-    tf_optimizer = tf.train.GradientDescentOptimizer(0.5).minimize(tf_loss)
+    tf_optimizer = tf.train.GradientDescentOptimizer(0.20).minimize(tf_loss)
 
     # Predictions for the training, validation, and test data.
 
