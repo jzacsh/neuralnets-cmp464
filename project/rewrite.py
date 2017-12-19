@@ -142,23 +142,23 @@ with tfgraph.as_default():
     tf_valid_dataset = tf.constant(dataSets.valid.data)
     tf_test_dataset = tf.constant(dataSets.testing.data)
 
-    test_weight_1 = tf.Variable(tf.truncated_normal([num_features, 400]))
-    test_bias_1   = tf.Variable(tf.zeros([400]))
-    test_weight_2 = tf.Variable(tf.truncated_normal([400, num_outputs]))
-    test_bias_2   = tf.Variable(tf.zeros([num_outputs]))
+    train_weight_1 = tf.Variable(tf.truncated_normal([num_features, 400]))
+    train_bias_1   = tf.Variable(tf.zeros([400]))
+    train_weight_2 = tf.Variable(tf.truncated_normal([400, num_outputs]))
+    train_bias_2   = tf.Variable(tf.zeros([num_outputs]))
 
     sys.stderr.write(
             "Setup: %d hidden layers to train from %d features to %d outputs\n"
             % (num_hidden, num_features, num_outputs))
 
-    hidden_1 = tf.add(tf.matmul(tf_train_dataset, test_weight_1), test_bias_1, name="training-inputs")
+    hidden_1 = tf.add(tf.matmul(tf_train_dataset, train_weight_1), train_bias_1, name="training-inputs")
 
     # Training computation.
-    tf_wxb = tf.add(tf.matmul(hidden_1, test_weight_2), test_bias_2, name="training-hidden")
+    tf_wxb = tf.add(tf.matmul(hidden_1, train_weight_2), train_bias_2, name="training-hidden")
 
     regularizers = REGULARIZER_EPSILON * tf.add_n([
-        tf.nn.l2_loss(test_weight_1),
-        tf.nn.l2_loss(test_weight_2),
+        tf.nn.l2_loss(train_weight_1),
+        tf.nn.l2_loss(train_weight_2),
     ])
 
     tf_loss = tf.reduce_mean(
@@ -172,20 +172,11 @@ with tfgraph.as_default():
     # softmax: compute Pr(...) via outputs w/sigmoid & normalizing
     tf_train_prediction = tf.nn.softmax(tf_wxb)
 
-    valid_weight_1 = tf.Variable(tf.truncated_normal([num_features, 400]))
-    valid_bias_1   = tf.Variable(tf.zeros([400]))
-    valid_weight_2 = tf.Variable(tf.truncated_normal([400, num_outputs]))
-    valid_bias_2   = tf.Variable(tf.zeros([num_outputs]))
-    valid_hidden_1 = tf.add(tf.matmul(tf_valid_dataset, valid_weight_1), valid_bias_1, name="valid-inputs")
+    valid_hidden_1 = tf.add(tf.matmul(tf_valid_dataset, train_weight_1), train_bias_1, name="valid-inputs")
+    test_hidden_1 = tf.add(tf.matmul(tf_test_dataset, train_weight_1), train_bias_1, name="valid-inputs")
 
-    test_weight_1 = tf.Variable(tf.truncated_normal([num_features, 400]))
-    test_bias_1   = tf.Variable(tf.zeros([400]))
-    test_weight_2 = tf.Variable(tf.truncated_normal([400, num_outputs]))
-    test_bias_2   = tf.Variable(tf.zeros([num_outputs]))
-    test_hidden_1 = tf.add(tf.matmul(tf_test_dataset, test_weight_1), test_bias_1, name="valid-inputs")
-
-    tf_valid_prediction = tf.add(tf.matmul(valid_hidden_1, valid_weight_2), valid_bias_2, name="valid")
-    tf_test_prediction  = tf.add(tf.matmul(test_hidden_1,   test_weight_2), test_bias_2, name="test")
+    tf_valid_prediction = tf.add(tf.matmul(valid_hidden_1, train_weight_2), train_bias_2, name="valid")
+    tf_test_prediction  = tf.add(tf.matmul(test_hidden_1,  train_weight_2), train_bias_2, name="test")
 
 
 #############################################################
