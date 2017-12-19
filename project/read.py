@@ -18,6 +18,8 @@ DEBUG_RATE_INVERSE = 5
 
 REGULARIZER_EPSILON = 0.01
 
+NUM_HIDDE_LAYERS = 1 # 0 to have no hidden layers
+
 DEBUG_DATA_PARSING = False
 
 ###############################################################################
@@ -222,8 +224,7 @@ with tfgraph.as_default():
     tf_valid_dataset = tf.constant(dataSets.valid.data, name="validdata")
     tf_test_dataset = tf.constant(dataSets.testing.data, name="testdata")
 
-    cake = LayeredCake(num_features, num_outputs)
-    # TODO(zacsh) add on:                       , num_hidden=1)
+    cake = LayeredCake(num_features, num_outputs, num_hidden=NUM_HIDDE_LAYERS)
 
     sys.stderr.write(
             "Setup: %d hidden layers to train from %d features to %d outputs, as such:\n\t%s\n"
