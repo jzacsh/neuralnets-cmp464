@@ -182,11 +182,12 @@ with tfgraph.as_default():
 #############################################################
 # actual training starts here ###############################
 
+def debugAccuracyOf(predictions, labels):
+    # predictions will be one hot encoded too and seeing if agree where 1 is
+    isHighestProbabilityOnCorrectLetter = np.argmax(predictions, 1) == np.argmax(labels, 1)
+    return (100.0 * np.sum(isHighestProbabilityOnCorrectLetter) / predictions.shape[0])
+
 def printBatchDebug(step, cost, predic, labels):
-    def debugAccuracyOf(predictions, labels):
-        # predictions will be one hot encoded too and seeing if agree where 1 is
-        isHighestProbabilityOnCorrectLetter = np.argmax(predictions, 1) == np.argmax(labels, 1)
-        return (100.0 * np.sum(isHighestProbabilityOnCorrectLetter) / predictions.shape[0])
     pAcc = debugAccuracyOf(predic, labels)
     vAcc = debugAccuracyOf(tf_valid_prediction.eval(), dataSets.valid.labels)
 
@@ -220,4 +221,7 @@ with tf.Session(graph=tfgraph) as sess:
 
     sys.stderr.write("TRAINING COMPLETE; last step was:\n")
     printBatchDebug(step, batchCost, batchPredictions, labels)
+    sys.stderr.write(
+            "final test data: %.8f%%\n" %
+            debugAccuracyOf(tf_test_prediction.eval(), dataSets.testing.labels))
     writer.close()
