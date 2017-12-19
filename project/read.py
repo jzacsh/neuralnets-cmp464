@@ -11,18 +11,18 @@ import math
 # global settings #############################################################
 BATCH_SIZE = 128 # the N for the minibatches
 
-NUM_STEPS = 3001 # number of training steps to walk through
+NUM_STEPS = 30001 # number of training steps to walk through
 
 MAX_BATCH_DEBUG_LINES = 5
 # Max (minus 1) number of training steps to debug-print
 
-REGULARIZER_EPSILON = 0.01
+REGULARIZER_EPSILON = 0.0501
 
 NUM_HIDDE_LAYERS = 1 # 0 to have no hidden layers
 
 DEBUG_DATA_PARSING = False
 
-GRADIENT_RATE = 0.5 # GradientDescentOptimizer's learning_rate
+GRADIENT_RATE = 0.0125 # GradientDescentOptimizer's learning_rate
 # https://www.tensorflow.org/api_docs/python/tf/train/GradientDescentOptimizer
 
 sys.stderr.write(
