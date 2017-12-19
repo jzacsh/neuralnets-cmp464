@@ -191,10 +191,10 @@ class LayeredCake:
             lastWxB = layer.wxb(lastWxB, "layer-%02d"%(i))
         return lastWxB
 
-    def buildLossGraph(self, outLayer, weightBeta):
+    def buildLossGraph(self, expecting, outLayer, weightBeta):
         # scale with sigmoid
         log_probs = tf.nn.softmax_cross_entropy_with_logits(
-                labels=tf_train_labels,
+                labels=expecting,
                 # "logits" = "unscaled log probabilities"
                 logits=outLayer)
         return tf.reduce_mean(tf.reduce_mean(log_probs) + self.regularizers(weightBeta))
@@ -231,7 +231,7 @@ with tfgraph.as_default():
 
     # Training computation.
     tf_outLayer = cake.feed_forward(tf_train_dataset)
-    tf_loss = cake.buildLossGraph(tf_outLayer, REGULARIZER_EPSILON)
+    tf_loss = cake.buildLossGraph(tf_train_labels, tf_outLayer, REGULARIZER_EPSILON)
     tf_optimizer = tf.train.GradientDescentOptimizer(0.5).minimize(tf_loss)
 
     # Predictions for the training, validation, and test data.
