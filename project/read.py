@@ -25,6 +25,23 @@ DEBUG_DATA_PARSING = False
 GRADIENT_RATE = 0.5 # GradientDescentOptimizer's learning_rate
 # https://www.tensorflow.org/api_docs/python/tf/train/GradientDescentOptimizer
 
+sys.stderr.write(
+        """static config values:
+    BATCH_SIZE = %d
+    NUM_STEPS = %d
+    MAX_BATCH_DEBUG_LINES = %d
+    REGULARIZER_EPSILON = % 5.10f
+    NUM_HIDDE_LAYERS = %d
+    DEBUG_DATA_PARSING = %d
+    GRADIENT_RATE = % 5.10f\n""" % (
+        BATCH_SIZE,
+        NUM_STEPS,
+        MAX_BATCH_DEBUG_LINES,
+        REGULARIZER_EPSILON,
+        NUM_HIDDE_LAYERS,
+        DEBUG_DATA_PARSING,
+        GRADIENT_RATE))
+
 ###############################################################################
 # important constants: don't touch! ###########################################
 
