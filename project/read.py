@@ -13,7 +13,7 @@ BATCH_SIZE = 128 # the N for the minibatches
 
 NUM_STEPS = 3001 # number of training steps to walk through
 
-DEBUG_RATE_INVERSE = 5
+MAX_BATCH_DEBUG_LINES = 5
 # Max (minus 1) number of training steps to debug-print
 
 REGULARIZER_EPSILON = 0.01
@@ -33,7 +33,7 @@ NUM_LETTERS = 10 # size of the set of letters we're recognizing: |{a...j}|
 PICKLE_FILE = sys.argv[1]
 LOG_DIR = sys.argv[2]
 
-DEBUG_RATE_MOD = int(NUM_STEPS / DEBUG_RATE_INVERSE)
+DEBUG_RATE_MOD = int(NUM_STEPS / MAX_BATCH_DEBUG_LINES)
 
 os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
 # not really doing intersting things in this project, so just ignore optimization
