@@ -22,6 +22,9 @@ NUM_HIDDE_LAYERS = 1 # 0 to have no hidden layers
 
 DEBUG_DATA_PARSING = False
 
+GRADIENT_RATE = 0.5 # GradientDescentOptimizer's learning_rate
+# https://www.tensorflow.org/api_docs/python/tf/train/GradientDescentOptimizer
+
 ###############################################################################
 # important constants: don't touch! ###########################################
 
@@ -233,7 +236,7 @@ with tfgraph.as_default():
     # Training computation.
     tf_outLayer = cake.feed_forward(tf_train_dataset)
     tf_loss = cake.buildLossGraph(tf_train_labels, tf_outLayer, REGULARIZER_EPSILON)
-    tf_optimizer = tf.train.GradientDescentOptimizer(0.5).minimize(tf_loss)
+    tf_optimizer = tf.train.GradientDescentOptimizer(GRADIENT_RATE).minimize(tf_loss)
 
     # Predictions for the training, validation, and test data.
 
